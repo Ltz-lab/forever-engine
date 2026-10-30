@@ -63,7 +63,6 @@ python3 tools/sweep_record.py <scratch> SAMPLE/*.json --scope "..." --generator 
 The record counts each request as matched, rejected with the gate's reasons, mismatched
 with its first differing metrics and first log line, or an error with the step that failed:
 the export, the Go run or the Rust run. A failing request never stops the others.
-`tools/validation_summary.py` adds the record to [the summary](validation-summary.md).
 
 ## Comparison alerts
 

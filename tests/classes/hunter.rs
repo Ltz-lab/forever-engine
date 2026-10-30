@@ -13,7 +13,7 @@ use std::{fs, path::Path};
 fn production() -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/production-marksmanship-hunter.prepared.json");
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 fn parse(value: Value) -> PreparedV2 {
@@ -154,7 +154,7 @@ fn in_melee_range_the_main_hand_swings_instead_of_auto_shot() {
 fn fixture(name: &str) -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join(format!("fixtures/mage/prepared-v2/{name}.prepared.json"));
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 /// The lines of one unit's log, by its label.
@@ -448,7 +448,7 @@ fn survival_against(targets: u32) -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR")).join(format!(
         "fixtures/mage/prepared-v2/production-survival-hunter-{targets}-targets.prepared.json"
     ));
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 /// Against several targets the application's lines reach Explosive Trap and Volley, which
@@ -760,7 +760,7 @@ fn the_reference_restarts_the_auto_shot_timer_on_every_melee_swing() {
 #[test]
 fn a_rotation_move_needs_the_exported_speed() {
     let mut value: Value = serde_json::from_slice(
-        &fs::read(
+        &crate::fixtures::read(
             Path::new(env!("CARGO_MANIFEST_DIR"))
                 .join("fixtures/mage/prepared-v2/production-warrior.prepared.json"),
         )

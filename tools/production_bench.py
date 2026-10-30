@@ -22,6 +22,8 @@ import resource
 import subprocess
 from pathlib import Path
 
+import fixture_files
+
 ROOT = Path(__file__).resolve().parent.parent
 FAMILY = ROOT / "fixtures/mage/prepared-v2"
 GO = ROOT / "oracle-cache/forever-go-oracle-v2"
@@ -40,7 +42,7 @@ def comparable(document):
 
 def raised(case, iterations, scratch):
     request = json.loads((FAMILY / f"{case}.request.json").read_text())
-    prepared = json.loads((FAMILY / f"{case}.prepared.json").read_text())
+    prepared = fixture_files.load(FAMILY / f"{case}.prepared.json")
     request["simOptions"]["iterations"] = iterations
     request["simOptions"]["debugFirstIteration"] = False
     request["simOptions"].pop("debug", None)
@@ -62,7 +64,8 @@ def main():
     parser.add_argument("cases", nargs="*")
     args = parser.parse_args()
     cases = args.cases or sorted(
-        path.name[: -len(".prepared.json")] for path in FAMILY.glob("production-*.prepared.json")
+        {path.name.removesuffix(fixture_files.SUFFIX).removesuffix(".prepared.json")
+         for path in FAMILY.glob("production-*.prepared.json*")}
     )
     scratch = args.output.parent / "inputs"
     scratch.mkdir(parents=True, exist_ok=True)

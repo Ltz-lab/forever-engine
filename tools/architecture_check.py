@@ -22,6 +22,7 @@ import shutil
 import subprocess
 import sys
 
+import fixture_files
 import prepared_v2
 from compare import CLIENT_BUILD, PIN, ROOT, go_pin_flags, load
 
@@ -62,11 +63,11 @@ def compare_case(case, results, family):
     if not result_path.exists() or "failed" in error.splitlines():
         return {"id": case["id"], "error": error[-2000:] or "no result"}
     result = load(result_path)
-    differences = prepared_v2.leaf_differences(load(family / case["go_result"]["file"]),
+    differences = prepared_v2.leaf_differences(fixture_files.load(family / case["go_result"]["file"]),
                                                prepared_v2.comparable(result))
     row = {"id": case["id"], "matched": not differences}
     if "go_log" in case:
-        golden_log = (family / case["go_log"]["file"]).read_text()
+        golden_log = fixture_files.read_text(family / case["go_log"]["file"])
         # The accepted log leaves out the stat recalculation lines, as go_golden does.
         lines = [line for line in result.get("logs", "").splitlines()
                  if not any(skip in line for skip in prepared_v2.SKIPPED_LOG_LINES)]

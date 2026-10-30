@@ -14,7 +14,7 @@ use std::{fs, path::Path};
 fn feral() -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/production-feral-druid.prepared.json");
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 fn parse(value: Value) -> PreparedV2 {
@@ -127,7 +127,7 @@ fn threat_follows_the_form() {
 fn bear() -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/production-feral-bear-druid.prepared.json");
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 #[test]
@@ -370,7 +370,7 @@ fn leaving_bear_form_at_the_end_keeps_the_health_fraction() {
 fn wildheart_raiment_is_inert_on_a_cat() {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/feral-druid-wildheart-raiment.prepared.json");
-    let value: Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+    let value: Value = serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
     assert_eq!(check_prepared(&parse(value.clone())), Ok(()));
     let mut refused = value;
     refused["effects"]
@@ -385,7 +385,7 @@ fn wildheart_raiment_is_inert_on_a_cat() {
 fn accepted(case: &str) -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join(format!("fixtures/mage/prepared-v2/{case}.prepared.json"));
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 /// A tank's absorb proc hears the target's swings, so it needs its effect.
@@ -709,7 +709,7 @@ fn each_copy_swings_with_the_roar_it_holds() {
 fn fixture(name: &str) -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join(format!("fixtures/mage/prepared-v2/{name}.prepared.json"));
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 fn logged(mut value: Value) -> String {

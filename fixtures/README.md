@@ -19,3 +19,15 @@ New fixture families should use `fixtures/<class>/<spec>/<schema-or-reference>/`
 with a manifest identifying source, schema and expected coverage. Class tests
 should follow the same class/spec names. Introduce a new family when it has real
 cases; do not populate placeholder directories for unimplemented classes.
+
+## Compressed files
+
+Large files in `mage/prepared-v2` (`*.prepared.json`, `*.go-result.json` and `*.go-log.txt`)
+are stored as `NAME.gz`, made with `gzip -n` so the bytes are reproducible. Manifests and
+`upstream/changes.json` keep naming `NAME`, and their digests are of the decompressed bytes.
+`frost-reference.prepared.json` stays plain for the README quick start, and requests and
+`manifest.json` are never compressed.
+
+Readers use `tests/support/fixtures.rs` in Rust tests and `tools/fixture_files.py` in Python
+tools, which fall back to `NAME.gz` when `NAME` is missing. `tools/prepared_v2.py` compresses
+what it writes.

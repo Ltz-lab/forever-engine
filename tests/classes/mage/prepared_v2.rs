@@ -32,8 +32,10 @@ fn manifest() -> Manifest {
 }
 
 fn reference_json() -> Value {
-    serde_json::from_slice(&fs::read(family().join("frost-reference.prepared.json")).unwrap())
-        .unwrap()
+    serde_json::from_slice(
+        &crate::fixtures::read(family().join("frost-reference.prepared.json")).unwrap(),
+    )
+    .unwrap()
 }
 
 type Mutation = (&'static str, fn(&mut Value));
@@ -52,7 +54,7 @@ fn reasons(value: Value) -> Vec<String> {
 #[test]
 fn accepted_fixtures_report_their_expected_coverage() {
     for case in manifest().cases {
-        let bytes = fs::read(family().join(&case.prepared)).unwrap();
+        let bytes = crate::fixtures::read(family().join(&case.prepared)).unwrap();
         let prepared: PreparedV2 = serde_json::from_slice(&bytes).unwrap();
         assert_eq!(prepared.scenario_id, case.id);
         let result = check_prepared(&prepared);
@@ -173,7 +175,7 @@ fn active_listeners_without_an_effect_are_reported() {
 #[test]
 fn catalog_item_procs_need_their_effects() {
     let path = family().join("combat-rogue-item-procs.prepared.json");
-    let value: Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+    let value: Value = serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
     assert!(check_prepared(&parse(value.clone()).unwrap()).is_ok());
     let weapon_procs: Vec<&Value> = value["effects"]
         .as_array()
@@ -207,7 +209,7 @@ fn catalog_item_procs_need_their_effects() {
 fn spell_procs_and_mana_items_need_their_effects() {
     let load = |case: &str| -> Value {
         let path = family().join(format!("{case}.prepared.json"));
-        serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+        serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
     };
     for case in [
         "arcane-mage-spell-stat-procs",
@@ -298,7 +300,7 @@ fn rotation_spells_without_behavior_are_reported() {
 #[test]
 fn temporary_stat_changes_must_be_to_dynamic_stats() {
     let path = family().join("frost-orc.prepared.json");
-    let mut value: Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+    let mut value: Value = serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
     assert!(check_prepared(&parse(value.clone()).unwrap()).is_ok());
     let blood_fury = value["effects"]
         .as_array_mut()
@@ -317,7 +319,7 @@ fn temporary_stat_changes_must_be_to_dynamic_stats() {
 #[test]
 fn ignite_builds_may_cast_fire_spells() {
     let path = family().join("arcane-ignite.prepared.json");
-    let mut value: Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+    let mut value: Value = serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
     let fireball = value["player"]["spells"]
         .as_array()
         .unwrap()
@@ -342,7 +344,7 @@ fn ignite_builds_may_cast_fire_spells() {
 #[test]
 fn ignite_builds_with_a_goblin_sapper_are_supported() {
     let path = family().join("fire-mage-goblin-sapper.prepared.json");
-    let value: Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+    let value: Value = serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
     assert!(check_prepared(&parse(value).unwrap()).is_ok());
 }
 
@@ -352,7 +354,7 @@ fn ignite_builds_with_a_goblin_sapper_are_supported() {
 /// global cooldown. The build is supported, and its Go golden casts no Ice Lance.
 #[test]
 fn community_fix_622_unknown_aura_conditions_read_as_inactive() {
-    let bytes = fs::read(family().join("frost-no-fingers.prepared.json")).unwrap();
+    let bytes = crate::fixtures::read(family().join("frost-no-fingers.prepared.json")).unwrap();
     let prepared: PreparedV2 = serde_json::from_slice(&bytes).unwrap();
     assert!(!prepared.player.talents.contains_key("fingers_of_frost"));
     assert_eq!(prepared_coverage(&prepared), Vec::<String>::new());
@@ -363,7 +365,8 @@ fn community_fix_622_unknown_aura_conditions_read_as_inactive() {
 /// casts no Arcane Missiles.
 #[test]
 fn community_fix_622_guarded_conditions_are_supported() {
-    let bytes = fs::read(family().join("reference-no-missile-barrage.prepared.json")).unwrap();
+    let bytes =
+        crate::fixtures::read(family().join("reference-no-missile-barrage.prepared.json")).unwrap();
     let prepared: PreparedV2 = serde_json::from_slice(&bytes).unwrap();
     assert!(!prepared.player.talents.contains_key("missile_barrage"));
     assert_eq!(prepared_coverage(&prepared), Vec::<String>::new());
@@ -516,7 +519,9 @@ struct GoldenManifest {
 /// Runs one case and compares it with its Go golden: the result's fields and, when the case
 /// keeps one, the first-fight log. An `Err` names the case and says what differs.
 fn check_golden(case: &Golden, golden: &GoldenFile) -> Result<(), String> {
-    let read = |name: &str| fs::read(family().join(name)).map_err(|err| format!("{name}: {err}"));
+    let read = |name: &str| {
+        crate::fixtures::read(family().join(name)).map_err(|err| format!("{name}: {err}"))
+    };
     let prepared: PreparedV2 = serde_json::from_slice(&read(&case.prepared)?)
         .map_err(|err| format!("{}: {err}", case.prepared))?;
     let report = forever_engine::simulate_prepared(&prepared)
@@ -616,7 +621,7 @@ fn supported_cases_match_pinned_go_goldens() {
 #[test]
 fn damage_on_use_needs_a_known_outcome() {
     let path = family().join("arcane-mage-linkens-boomerang.prepared.json");
-    let mut value: Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+    let mut value: Value = serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
     assert!(check_prepared(&parse(value.clone()).unwrap()).is_ok());
     for effect in value["effects"].as_array_mut().unwrap() {
         if effect["kind"] == "damage_on_use" {
@@ -664,7 +669,7 @@ fn refusals_carry_stable_codes() {
     assert_eq!(codes(spell), ["unknown_spell"]);
 
     let path = family().join("production-marksmanship-hunter.prepared.json");
-    let mut hunter: Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+    let mut hunter: Value = serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
     for effect in hunter["effects"].as_array_mut().unwrap() {
         if effect["kind"] == "serpent_sting" {
             effect["tick_outcome"] = json!("magic_hit");
@@ -675,7 +680,8 @@ fn refusals_carry_stable_codes() {
     // A tank's fight against several targets is refused for a class whose hit-taken
     // behavior has not been checked against every copy of the boss swinging at it.
     let path = family().join("combat-riposte-tank.prepared.json");
-    let mut unchecked: Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+    let mut unchecked: Value =
+        serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
     unchecked["encounter"]["target_count"] = json!(3);
     assert_eq!(codes(unchecked), ["several_targets_unsupported"]);
 }
@@ -731,7 +737,7 @@ fn saved_iteration_values_match_go_exactly() {
         "all-values-affliction-warlock-labeled",
     ];
     for case in cases {
-        let read = |name: String| fs::read(family().join(name)).unwrap();
+        let read = |name: String| crate::fixtures::read(family().join(name)).unwrap();
         let prepared: PreparedV2 =
             serde_json::from_slice(&read(format!("{case}.prepared.json"))).unwrap();
         assert!(prepared.sim.save_all_values, "{case}");
@@ -775,7 +781,8 @@ fn saved_iteration_values_match_go_exactly() {
 #[test]
 fn iteration_values_are_reported_only_on_request() {
     let path = family().join("all-values-frost-mage.prepared.json");
-    let mut prepared: PreparedV2 = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+    let mut prepared: PreparedV2 =
+        serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
     prepared.sim.save_all_values = false;
     let report = forever_engine::simulate_prepared(&prepared).unwrap();
     let mut found = Vec::new();

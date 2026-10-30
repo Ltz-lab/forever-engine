@@ -14,7 +14,7 @@ use std::{fs, path::Path};
 fn production() -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/production-shadow-priest.prepared.json");
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 fn parse(value: Value) -> PreparedV2 {
@@ -159,7 +159,7 @@ fn shadow_weaving_outside_spell_hits_is_rejected() {
 fn smite() -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/production-smite-priest.prepared.json");
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 fn effect<'a>(value: &'a mut Value, kind: &str) -> &'a mut Value {
@@ -206,7 +206,7 @@ fn power_in_light_needs_a_burning_dot() {
 fn accepted(case: &str) -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join(format!("fixtures/mage/prepared-v2/{case}.prepared.json"));
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 #[test]
@@ -302,7 +302,7 @@ fn shadow_against(targets: u32) -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR")).join(format!(
         "fixtures/mage/prepared-v2/production-shadow-priest-{targets}-targets.prepared.json"
     ));
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 /// The application's multidot puts Shadow Word: Pain on every target, each with its own dot,

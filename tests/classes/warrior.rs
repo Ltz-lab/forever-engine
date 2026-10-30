@@ -7,12 +7,12 @@ use forever_engine::{
     check_prepared, contracts::prepared_v2::PreparedV2, prepared_coverage, PreparedError,
 };
 use serde_json::{json, Value};
-use std::{fs, path::Path};
+use std::path::Path;
 
 fn fury_json() -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/production-warrior.prepared.json");
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 fn reasons(value: Value) -> Vec<String> {
@@ -101,7 +101,8 @@ fn own_sunder_armor_and_a_swing_stopping_slam_are_supported() {
     ] {
         let path = Path::new(env!("CARGO_MANIFEST_DIR"))
             .join(format!("fixtures/mage/prepared-v2/{case}.prepared.json"));
-        let prepared: PreparedV2 = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+        let prepared: PreparedV2 =
+            serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
         assert_eq!(prepared_coverage(&prepared), Vec::<String>::new(), "{case}");
     }
 }
@@ -111,7 +112,7 @@ fn own_sunder_armor_and_a_swing_stopping_slam_are_supported() {
 fn own_sunder_armor_needs_the_armor_category() {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/protection-warrior-own-sunder.prepared.json");
-    let mut value: Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+    let mut value: Value = serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
     value["effects"]
         .as_array_mut()
         .unwrap()
@@ -138,7 +139,7 @@ fn rage_without_a_rage_bar_is_unsupported() {
 fn protection_json() -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/production-protection-warrior.prepared.json");
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 #[test]
@@ -149,7 +150,8 @@ fn production_tank_requests_are_supported() {
     ] {
         let path = Path::new(env!("CARGO_MANIFEST_DIR"))
             .join(format!("fixtures/mage/prepared-v2/{case}.prepared.json"));
-        let prepared: PreparedV2 = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+        let prepared: PreparedV2 =
+            serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
         assert_eq!(prepared_coverage(&prepared), Vec::<String>::new(), "{case}");
     }
 }
@@ -167,7 +169,7 @@ fn last_stand_below_a_health_threshold_is_supported() {
     ] {
         let path = Path::new(env!("CARGO_MANIFEST_DIR"))
             .join(format!("fixtures/mage/prepared-v2/{case}.prepared.json"));
-        let value: Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+        let value: Value = serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
         let prepared: PreparedV2 = serde_json::from_value(value.clone()).unwrap();
         assert_eq!(prepared_coverage(&prepared), Vec::<String>::new(), "{case}");
         // Last Stand runs only through its effect.
@@ -195,7 +197,7 @@ fn survival_cooldowns_below_a_health_threshold_are_supported() {
     ] {
         let path = Path::new(env!("CARGO_MANIFEST_DIR"))
             .join(format!("fixtures/mage/prepared-v2/{case}.prepared.json"));
-        let value: Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+        let value: Value = serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
         let prepared: PreparedV2 = serde_json::from_value(value.clone()).unwrap();
         assert_eq!(prepared_coverage(&prepared), Vec::<String>::new(), "{case}");
         // Shield Wall runs only through its effect.
@@ -309,7 +311,7 @@ fn an_untracked_damage_taken_aura_is_unsupported() {
 fn warrior_fixture(name: &str) -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join(format!("fixtures/mage/prepared-v2/{name}.prepared.json"));
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 /// Enrage and Blood Craze act on the Goblin Sapper Charge's hit on the player with nothing

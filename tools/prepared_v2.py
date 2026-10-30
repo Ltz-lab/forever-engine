@@ -26,6 +26,7 @@ import subprocess
 import sys
 
 from compare import ROOT, PIN, CLIENT_BUILD, build_oracle, command, go_pin_flags, load
+import fixture_files
 
 FAMILY = ROOT / "fixtures" / "mage" / "prepared-v2"
 EXPORTER = ROOT / "tools" / "oracle-v2"
@@ -45,7 +46,8 @@ def exporter_digest():
 
 
 def digest(path):
-    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    """SHA-256 of a fixture's uncompressed bytes, whether it is stored plain or gzip-compressed."""
+    return fixture_files.digest(path)
 
 
 def request_of(case):
@@ -74,11 +76,11 @@ def check(family=FAMILY):
     require(len(ids) == len(set(ids)), "duplicate case identifiers")
     for case in manifest["cases"]:
         prepared_path = family / case["prepared"]
-        require(prepared_path.is_file(), f"missing prepared file for {case['id']}")
-        if not prepared_path.is_file():
+        require(fixture_files.exists(prepared_path), f"missing prepared file for {case['id']}")
+        if not fixture_files.exists(prepared_path):
             continue
         require(digest(prepared_path) == case["prepared_sha256"], f"changed prepared file: {case['id']}")
-        prepared = load(prepared_path)
+        prepared = fixture_files.load(prepared_path)
         require(prepared["scenario_id"] == case["id"], f"scenario identifier differs: {case['id']}")
         require(prepared["reference"]["engine_revision"] == PIN, f"reference revision differs: {case['id']}")
         require(prepared["reference"]["client_build"] == CLIENT_BUILD, f"client build differs: {case['id']}")
@@ -86,7 +88,8 @@ def check(family=FAMILY):
         for key in ("go_result", "go_log"):
             if key in case:
                 path = family / case[key]["file"]
-                require(path.is_file() and digest(path) == case[key]["sha256"], f"changed {key} for {case['id']}")
+                require(fixture_files.exists(path) and digest(path) == case[key]["sha256"],
+                        f"changed {key} for {case['id']}")
                 require(case["expected_coverage"]["supported"], f"{case['id']}: goldens need a supported case")
         request = request_of(case)
         require(int(request["simOptions"]["iterations"]) == prepared["sim"]["iterations"],
@@ -140,7 +143,7 @@ def accept(cache, source, case_id, request, description, keep_log, family=FAMILY
     if family.resolve() not in request.parents:
         raise ValueError("place the request in the fixture family first")
     prepared_path = family / f"{case_id}.prepared.json"
-    if prepared_path.exists():
+    if fixture_files.exists(prepared_path):
         raise ValueError(f"{prepared_path} already exists")
     exporter = build_exporter(cache.resolve(), source)
     command([exporter, "prepare", "--infile", request, "--outfile", prepared_path, "--scenario", case_id])
@@ -158,10 +161,13 @@ def accept(cache, source, case_id, request, description, keep_log, family=FAMILY
         result_path = family / f"{case_id}.go-result.json"
         result_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
         case["go_result"] = {"file": result_path.name, "sha256": digest(result_path)}
+        fixture_files.store(result_path)
         if keep_log:
             log_path = family / f"{case_id}.go-log.txt"
             log_path.write_text(log)
             case["go_log"] = {"file": log_path.name, "sha256": digest(log_path)}
+            fixture_files.store(log_path)
+    fixture_files.store(prepared_path)
     manifest["cases"].append(case)
     (family / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     return case
@@ -175,13 +181,16 @@ def promote(cache, source, case_id, keep_log, family=FAMILY):
         raise ValueError(f"no case {case_id}")
     if "go_result" in case:
         raise ValueError(f"{case_id} already has Go goldens")
-    completed = subprocess.run(["cargo", "run", "--locked", "--quiet", "--manifest-path", ROOT / "Cargo.toml", "--",
-                                "check", "--infile", family / case["prepared"]], capture_output=True, text=True, check=True)
+    import tempfile
+    with tempfile.TemporaryDirectory() as scratch:
+        prepared_path = fixture_files.materialize(family / case["prepared"], scratch)
+        completed = subprocess.run(["cargo", "run", "--locked", "--quiet", "--manifest-path", ROOT / "Cargo.toml",
+                                    "--", "check", "--infile", prepared_path], capture_output=True, text=True,
+                                   check=True)
     coverage = json.loads(completed.stdout)
     if not coverage["supported"]:
         raise ValueError(f"{case_id} is not supported: {coverage['reasons']}")
     exporter = build_exporter(cache.resolve(), source)
-    import tempfile
     with tempfile.TemporaryDirectory() as scratch:
         request_path = Path(scratch) / "request.json"
         request_path.write_text(json.dumps(request_of(case), indent=2) + "\n")
@@ -189,10 +198,12 @@ def promote(cache, source, case_id, keep_log, family=FAMILY):
     result_path = family / f"{case_id}.go-result.json"
     result_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
     case["go_result"] = {"file": result_path.name, "sha256": digest(result_path)}
+    fixture_files.store(result_path)
     if keep_log:
         log_path = family / f"{case_id}.go-log.txt"
         log_path.write_text(log)
         case["go_log"] = {"file": log_path.name, "sha256": digest(log_path)}
+        fixture_files.store(log_path)
     case["expected_coverage"] = {"supported": True, "reasons": []}
     (family / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     return case
@@ -211,13 +222,14 @@ def refresh(cache, source, family=FAMILY):
             request_path.write_text(json.dumps(request_of(case), indent=2) + "\n")
             if "go_result" in case:
                 result, log = go_golden(exporter, request_path, scratch / case["id"])
-                if result != load(family / case["go_result"]["file"]):
+                if result != fixture_files.load(family / case["go_result"]["file"]):
                     raise ValueError(f"{case['id']}: the Go result changed; this is not an exporter-only change")
-                if "go_log" in case and log != (family / case["go_log"]["file"]).read_text():
+                if "go_log" in case and log != fixture_files.read_text(family / case["go_log"]["file"]):
                     raise ValueError(f"{case['id']}: the Go log changed; this is not an exporter-only change")
             prepared_path = family / case["prepared"]
             command([exporter, "prepare", "--infile", request_path, "--outfile", prepared_path, "--scenario", case["id"]])
             case["prepared_sha256"] = digest(prepared_path)
+            fixture_files.store(prepared_path)
     manifest["exporter_sha256"] = exporter_digest()
     (family / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     return manifest
@@ -243,23 +255,26 @@ def repin(cache, source, output, family=FAMILY):
         prepared_path = family / case["prepared"]
         command([exporter, "prepare", "--infile", request_path, "--outfile", prepared_path, "--scenario", case["id"]])
         case["prepared_sha256"] = digest(prepared_path)
+        fixture_files.store(prepared_path)
         if "go_result" not in case:
             continue
         result, log = go_golden(exporter, request_path, output / case["id"])
         result_path = family / case["go_result"]["file"]
-        previous = load(result_path)
+        previous = fixture_files.load(result_path)
         change = {"id": case["id"]}
         if result != previous:
             change["result"] = {"dps": [dps(previous), dps(result)],
                                 "differences": len(leaf_differences(previous, result))}
             result_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
             case["go_result"]["sha256"] = digest(result_path)
+            fixture_files.store(result_path)
         if "go_log" in case:
             log_path = family / case["go_log"]["file"]
-            if log != log_path.read_text():
+            if log != fixture_files.read_text(log_path):
                 change["log"] = True
                 log_path.write_text(log)
                 case["go_log"]["sha256"] = digest(log_path)
+                fixture_files.store(log_path)
         if len(change) > 1:
             changes.append(change)
     previous_revision = manifest["engine_revision"]
@@ -286,13 +301,13 @@ def capture(cache, source, output, family=FAMILY):
         prepared_path = output / case["prepared"]
         command([exporter, "prepare", "--infile", request_path, "--outfile", prepared_path,
                  "--scenario", case["id"]])
-        if load(prepared_path) != load(family / case["prepared"]):
+        if load(prepared_path) != fixture_files.load(family / case["prepared"]):
             differences.append(case["id"])
         if "go_result" in case:
             result, log = go_golden(exporter, request_path, output / case["id"])
-            if result != load(family / case["go_result"]["file"]):
+            if result != fixture_files.load(family / case["go_result"]["file"]):
                 differences.append(f"{case['id']} Go result")
-            if "go_log" in case and log != (family / case["go_log"]["file"]).read_text():
+            if "go_log" in case and log != fixture_files.read_text(family / case["go_log"]["file"]):
                 differences.append(f"{case['id']} Go log")
     (output / "comparison.json").write_text(json.dumps({"differences": differences}, indent=2) + "\n")
     if differences:

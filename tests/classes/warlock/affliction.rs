@@ -6,12 +6,12 @@ use forever_engine::{
     check_prepared, contracts::prepared_v2::PreparedV2, simulate_prepared, PreparedError,
 };
 use serde_json::{json, Value};
-use std::{fs, path::Path};
+use std::path::Path;
 
 fn production() -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/production-affliction-warlock.prepared.json");
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 fn reasons(value: Value) -> Vec<String> {
@@ -112,7 +112,7 @@ fn a_pet_listed_twice_is_refused() {
 fn a_changing_spirit_reaches_the_player_but_not_a_pet() {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/affliction-warlock-golden-banana.prepared.json");
-    let mut value: Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+    let mut value: Value = serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
     let prepared: PreparedV2 = serde_json::from_value(value.clone()).unwrap();
     assert_eq!(check_prepared(&prepared), Ok(()));
     let label = value["pets"][0]["label"].as_str().unwrap().to_string();
@@ -133,7 +133,7 @@ fn a_changing_spirit_reaches_the_player_but_not_a_pet() {
 fn the_pet_dismissal_line_keeps_the_float_residue() {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/affliction-warlock-pet-dismiss-residue.prepared.json");
-    let mut value: Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+    let mut value: Value = serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
     value["sim"]["iterations"] = json!(1);
     let log = |value: &Value| {
         let prepared: PreparedV2 = serde_json::from_value(value.clone()).unwrap();

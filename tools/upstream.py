@@ -13,6 +13,7 @@ import subprocess
 import sys
 
 from compare import PIN, ROOT, load
+import fixture_files
 
 LEDGER = ROOT / "upstream"
 
@@ -60,7 +61,7 @@ def check(directory=LEDGER, community=None):
             require(bool(adoption.get("rust")), f"{label}: applicable change needs its Rust state")
             require(bool(change.get("regression")), f"{label}: applicable change needs a regression")
             for path in change.get("regression", []):
-                require((ROOT / path.split("#")[0]).is_file(), f"{label}: missing regression {path}")
+                require(fixture_files.exists(ROOT / path.split("#")[0]), f"{label}: missing regression {path}")
     # The reference's community base is the adopted base or a reviewed commit; every
     # applicable change up to it is in the reference.
     base = reference["community_base"]

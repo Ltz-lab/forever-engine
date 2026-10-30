@@ -1,3 +1,6 @@
+#[path = "support/fixtures.rs"]
+mod fixtures;
+
 use forever_engine::{
     implemented_prepared_effects, simulate_prepared, EngineIdentity, CLIENT_BUILD, SOURCE_REVISION,
 };
@@ -58,7 +61,7 @@ fn every_prepared_result_records_the_engine_identity() {
     );
     let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/frost-reference.prepared.json");
-    let mut value: Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+    let mut value: Value = serde_json::from_slice(&fixtures::read(path).unwrap()).unwrap();
     value["sim"]["iterations"] = serde_json::json!(1);
     let report = simulate_prepared(&serde_json::from_value(value).unwrap()).unwrap();
     let written = serde_json::to_value(&report).unwrap();

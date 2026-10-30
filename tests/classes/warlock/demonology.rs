@@ -6,12 +6,12 @@ use forever_engine::{
     check_prepared, contracts::prepared_v2::PreparedV2, simulate_prepared, PreparedError,
 };
 use serde_json::{json, Value};
-use std::{fs, path::Path};
+use std::path::Path;
 
 fn production() -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/production-demonology-warlock.prepared.json");
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 fn reasons(value: Value) -> Vec<String> {
@@ -86,7 +86,7 @@ fn decimation_needs_the_35_percent_phase() {
 fn brand_reads_the_live_school_power() {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/demonology-warlock-frozen-heart.prepared.json");
-    let mut value: Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+    let mut value: Value = serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
     value["sim"]["iterations"] = json!(1);
     let first_brand_base = |value: Value| -> f64 {
         let prepared: PreparedV2 = serde_json::from_value(value).unwrap();
@@ -142,7 +142,7 @@ fn inert_demons_carry_their_permanent_auras() {
 fn fel_energy_needs_its_effect() {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/demonology-warlock-voidwalker-pact.prepared.json");
-    let mut value: Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+    let mut value: Value = serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
     let prepared: PreparedV2 = serde_json::from_value(value.clone()).unwrap();
     assert_eq!(check_prepared(&prepared), Ok(()));
     remove_effect(&mut value, "fel_energy");

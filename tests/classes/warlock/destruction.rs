@@ -4,12 +4,12 @@
 
 use forever_engine::{check_prepared, contracts::prepared_v2::PreparedV2, PreparedError};
 use serde_json::{json, Value};
-use std::{fs, path::Path};
+use std::path::Path;
 
 fn production() -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/production-destruction-warlock.prepared.json");
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 fn reasons(value: Value) -> Vec<String> {

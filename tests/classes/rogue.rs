@@ -5,14 +5,14 @@ use forever_engine::{
     check_prepared, contracts::prepared_v2::PreparedV2, prepared_coverage, PreparedError,
 };
 use serde_json::Value;
-use std::{fs, path::Path};
+use std::path::Path;
 
 mod prepare;
 
 fn combat_json() -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/production-combat-rogue.prepared.json");
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 fn reasons(value: Value) -> Vec<String> {
@@ -76,7 +76,7 @@ fn chance_of_death_acts_once_the_player_can_take_damage() {
 fn fixture(name: &str) -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join(format!("fixtures/mage/prepared-v2/{name}.prepared.json"));
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 #[test]

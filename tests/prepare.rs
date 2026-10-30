@@ -1,6 +1,9 @@
 //! Rust preparation against the accepted prepared v2 fixtures: every fixture's request is
 //! read from the application's protojson and checked against what the Go exporter wrote.
 
+#[path = "support/fixtures.rs"]
+mod fixtures;
+
 use forever_engine::contracts::request::Request;
 use serde::Deserialize;
 use serde_json::Value;
@@ -48,7 +51,7 @@ fn prepared(case: &Case) -> Value {
     let path = root()
         .join("fixtures/mage/prepared-v2")
         .join(&case.prepared);
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&fixtures::read(path).unwrap()).unwrap()
 }
 
 #[test]

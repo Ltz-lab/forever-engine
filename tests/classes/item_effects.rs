@@ -11,7 +11,7 @@ use std::{fs, path::Path};
 fn fixture(name: &str) -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join(format!("fixtures/mage/prepared-v2/{name}.prepared.json"));
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 fn first_fight_log(mut value: Value) -> String {

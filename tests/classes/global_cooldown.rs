@@ -2,7 +2,7 @@
 //! confirmed (MythicSim Discord, 24 October 2026) and as the Go reference already does
 //! (`Cast.GCDTime`, `GCDMin` defaulting to a second). Cast times keep shrinking below it.
 
-use std::{fs, path::Path};
+use std::path::Path;
 
 use forever_engine::contracts::prepared_v2::PreparedV2;
 use serde_json::{json, Value};
@@ -16,7 +16,7 @@ const ARCANE_BLAST: &str = "{SpellID: 1239700}";
 fn arcane_blasts(cast_speed_multiplier: f64) -> (f64, f64, String) {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/arcane-arcane-explosion.prepared.json");
-    let mut value: Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+    let mut value: Value = serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
     assert_eq!(
         value["player"]["stats"]["SpellHasteRating"].as_f64(),
         Some(0.0)

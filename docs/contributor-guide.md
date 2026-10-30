@@ -4,11 +4,12 @@ Start with [README](../README.md) for supported scope and [CONTRIBUTING](../CONT
 for checks and evidence requirements. This map explains where behavior belongs.
 
 The project runs prepared v2 fights through a class-independent runtime in
-`core/fight` that mirrors Go's sim/core, with Mage behavior plugged in through
-`classes/mage/agent.rs`. Supported builds currently cast Frostbolt only. The
-[Frost inventory](first-frost-inventory.md) and the reference build's coverage report
-identify the mechanics still needed for the first complete build. The prepared v1
-Frostbolt kernel remains unchanged beside it.
+`core/fight` that mirrors Go's sim/core. Each class plugs in through
+`classes/<class>/agent.rs`; Druid, Hunter, Mage, Paladin, Priest, Rogue, Shaman,
+Warlock and Warrior have one. The coverage gate refuses requests that use anything
+not implemented, and [upstream/mechanics-map.json](../upstream/mechanics-map.json)
+records each mechanic's port status. The prepared v1 Frostbolt kernel remains
+unchanged beside it.
 
 ## Find the code
 
@@ -152,7 +153,7 @@ module name does not establish simulation coverage.
 ## Add a mechanic
 
 1. Identify the exact spell, talent or effect IDs, source revision and evidence.
-   Read the relevant [inventory](first-frost-inventory.md), [upstream policy](../UPSTREAM.md)
+   Read the [upstream policy](../UPSTREAM.md)
    and the mechanic's entry in [upstream/mechanics-map.json](../upstream/mechanics-map.json).
 2. Put reusable combat math in `mechanics`, class behavior in that class, and spec
    decisions in its `specs` module. Preserve deterministic trigger/event ordering.

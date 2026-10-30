@@ -15,12 +15,12 @@ fight. Ordinary Rust tests use frozen data and need no Go checkout.
 | [architecture_check.py](architecture_check.py) | Run every accepted Go golden against the pinned engine built for linux/arm64 or linux/amd64 in a Docker image of that platform, and record the differences | Python, Go, Docker and the oracle cache |
 | [route.py](route.py) | Run one production request in Rust, or report a fallback with refusal codes or a fault, for the application worker ([routing guide](../docs/routing.md)) | Python and a bundle from `shadow.py build` |
 | [board.py](board.py) | Render the ordered contributor board (issue #25) from milestones, priority labels, "Depends on" sections and `Status:` comments, list record refusals no issue states, and check or update the issue | Python and the GitHub CLI |
-| [validation_summary.py](validation_summary.py) | Summarize every validation and benchmark record into [docs/validation-summary.md](../docs/validation-summary.md), with totals | Python |
 | [boards.py](boards.py) | Write the application's published race board requests, one per spec and race, for a comparison | Python |
 | [sweep_record.py](sweep_record.py) | Write a sweep's validation record from a comparison run | Python |
 | [sweep.py](sweep.py) | Generate seeded randomized variants of one request for a compatibility sweep | Python |
 | [copy_targets.py](copy_targets.py) | Write requests against 2 to 5 copies of the boss from requests against one, as the application's Advanced targets setting does, optionally only the tank builds | Python |
 | [preset_matrix.py](preset_matrix.py) | Cross every class's upstream UI preset rotations, talents and gear sets into requests over the production requests | Python |
+| [fixture_files.py](fixture_files.py) | Read and store accepted fixtures in their gzip form (see [fixtures](../fixtures/README.md#compressed-files)) | Python and gzip |
 | [upstream.py](upstream.py) | Audit the [upstream ledger](../UPSTREAM.md#ledger), optionally against a community clone | Python; Git for the range check |
 | [oracle-v2/main.go](oracle-v2/main.go) | Export a reset Go simulation as [prepared v2](../docs/prepared-v2.md) and run the full Go engine | Built by prepared_v2.py in isolated scratch |
 | [matched-go/](matched-go/) | Go implementation of the same narrow Rust kernel for fair timing | Go |
@@ -43,8 +43,7 @@ Survey a set of inputs, such as exported application requests, before routing th
 python3 tools/census.py --output output/census/report.json REQUESTS_OR_DIRECTORIES...
 ```
 
-The [kernel guide](../docs/kernel.md), [inventory guide](../docs/first-frost-inventory.md)
-and [Go parity report](../docs/go-parity-validation-2026-10-03.md) describe scope and
+The [kernel guide](../docs/kernel.md) and [inventory manifest](../inventory/first-frost/manifest.json) describe scope and
 reproduction commands. Comparisons write scratch results under ignored `output/`
 and build the oracle under ignored `oracle-cache/`. They do not update accepted
 fixtures, engine pins or production jobs.

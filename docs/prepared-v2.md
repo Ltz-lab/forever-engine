@@ -401,7 +401,8 @@ cooldown: only a rotation action casts it.
 Client-data parameters are computed in the exporter with the same `spelldata`
 expressions the Go source uses. Missile Barrage chances, Judgement of Wisdom's 50%
 chance and Ice Lance's frozen multiplier are Go literals, not client data, and carry
-the uncertainty recorded in the [Frost inventory](first-frost-inventory.md).
+the uncertainty recorded under `known_gaps` in
+[inventory/first-frost/manifest.json](../inventory/first-frost/manifest.json).
 
 ## Unknown and unsupported input
 
@@ -775,7 +776,7 @@ name, a `schedule` of a group reference and `max` or `min` of a boolean or strin
 ## Examples
 
 The [fixture family](../fixtures/mage/prepared-v2/manifest.json) holds accepted
-inputs and their expected coverage. `frost-reference` is the frozen application
+inputs and their expected coverage. Most of its files are [stored gzipped](../fixtures/README.md#compressed-files). `frost-reference` is the frozen application
 request; it is supported and keeps Go's result and first-fight log as goldens.
 `frost-no-fingers` is the same request without Fingers of Frost, the regression for
 community fix #622; it casts no Ice Lance. `reference-no-missile-barrage` drops Missile

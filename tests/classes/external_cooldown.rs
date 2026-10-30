@@ -7,12 +7,12 @@
 use super::refusal_codes;
 use forever_engine::{contracts::prepared_v2::PreparedV2, simulate_prepared};
 use serde_json::{json, Value};
-use std::{fs, path::Path};
+use std::path::Path;
 
 fn fixture(case: &str) -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join(format!("fixtures/mage/prepared-v2/{case}.prepared.json"));
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 fn without_effect(mut value: Value, kind: &str) -> Value {

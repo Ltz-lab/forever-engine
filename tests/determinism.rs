@@ -11,6 +11,9 @@
 //! Each fresh process also seeds Rust's hash maps differently, so any result that depended on
 //! hash map iteration order would differ between the processes compared here.
 
+#[path = "support/fixtures.rs"]
+mod fixtures;
+
 use forever_engine::{contracts::prepared_v2::PreparedV2, simulate, simulate_prepared, Request};
 use std::{
     collections::BTreeMap,
@@ -78,7 +81,7 @@ fn without_timing(report: &str) -> String {
 
 /// Runs a job in this process the way the command does and prints its report.
 fn run_in_process(job: &Job) -> String {
-    let input = fs::read(&job.path).unwrap();
+    let input = fixtures::read(&job.path).unwrap();
     let text = if job.prepared {
         let prepared: PreparedV2 = serde_json::from_slice(&input).unwrap();
         serde_json::to_string_pretty(&simulate_prepared(&prepared).unwrap())
@@ -228,7 +231,7 @@ fn parallel_processes_agree_with_each_other_and_with_a_library_run() {
                 let mut command = Command::new(env!("CARGO_BIN_EXE_forever-engine"));
                 command
                     .args(["sim", "--infile"])
-                    .arg(&job.path)
+                    .arg(fixtures::file(&job.path))
                     .arg("--outfile")
                     .arg(&outfile);
                 if !job.prepared {
@@ -262,7 +265,7 @@ fn the_seed_changes_the_result_and_timing_is_the_only_noise() {
     let jobs = jobs();
     let job = &jobs[3];
     let mut prepared: serde_json::Value =
-        serde_json::from_slice(&fs::read(&job.path).unwrap()).unwrap();
+        serde_json::from_slice(&fixtures::read(&job.path).unwrap()).unwrap();
     let original = run_in_process(job);
     let seed = prepared["sim"]["seed"].as_i64().unwrap();
     prepared["sim"]["seed"] = (seed + 1).into();
@@ -272,7 +275,7 @@ fn the_seed_changes_the_result_and_timing_is_the_only_noise() {
     );
     assert!(original != other, "another seed gave the same report");
 
-    let input: PreparedV2 = serde_json::from_slice(&fs::read(&job.path).unwrap()).unwrap();
+    let input: PreparedV2 = serde_json::from_slice(&fixtures::read(&job.path).unwrap()).unwrap();
     let printed = |report| serde_json::to_string_pretty(&report).unwrap();
     let (first, second) = (
         printed(simulate_prepared(&input).unwrap()),

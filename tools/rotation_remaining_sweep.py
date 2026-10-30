@@ -38,6 +38,7 @@ import json
 from pathlib import Path
 import random
 
+import fixture_files
 from sweep import generate
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -124,7 +125,7 @@ def request_of(name):
 
 def prepared_of(name):
     path = FIXTURES / f"{name}.prepared.json"
-    return json.loads(path.read_text()) if path.exists() else None
+    return fixture_files.load(path) if fixture_files.exists(path) else None
 
 
 def player_of(request):

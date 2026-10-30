@@ -126,8 +126,8 @@ go vet ./...
 This provides a fairer language/implementation comparison for the current kernel.
 It still excludes full character construction, dynamic procs, other spells, the
 production APL, richer reports and parallel workloads. Shared-host timing variance
-and compiler/data-layout differences remain. See the
-[follow-up results](forever-rust-fair-comparison-2026-10-03.md).
+and compiler/data-layout differences remain. The recorded run, with every sample, is
+[benchmarks/2026-10-03-fair.json](../benchmarks/2026-10-03-fair.json).
 
 ### Original full-engine comparison
 

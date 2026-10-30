@@ -1,5 +1,8 @@
 //! Class and spec integration tests.
 
+#[path = "../support/fixtures.rs"]
+mod fixtures;
+
 mod druid;
 mod external_cooldown;
 mod global_cooldown;

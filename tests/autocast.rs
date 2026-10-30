@@ -3,6 +3,9 @@
 //! waits behind a cooldown that waits for the GCD, nor holds the cooldowns sorted after it
 //! back through a run of hardcasts (wowsims/forever 10b0e65f2 and fbf5d98e8).
 
+#[path = "support/fixtures.rs"]
+mod fixtures;
+
 use forever_engine::contracts::prepared_v2::PreparedV2;
 use serde_json::{json, Value};
 use std::{fs, path::Path};
@@ -12,7 +15,7 @@ const ITERATIONS: u64 = 300;
 fn fixture(name: &str) -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join(format!("fixtures/mage/prepared-v2/{name}.prepared.json"));
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&fixtures::read(path).unwrap()).unwrap()
 }
 
 /// The explosives' item ids among the player's major cooldowns.

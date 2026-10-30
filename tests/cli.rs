@@ -1,3 +1,6 @@
+#[path = "support/fixtures.rs"]
+mod fixtures;
+
 use std::{fs, process::Command};
 
 #[test]
@@ -38,7 +41,7 @@ fn benchmark_reports_only_requested_samples_after_warmup() {
         std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("fixtures/static-frost-60.rust.json");
     let result = Command::new(env!("CARGO_BIN_EXE_forever-engine"))
         .args(["bench", "--infile"])
-        .arg(input)
+        .arg(fixtures::file(input))
         .args(["--warmups", "2", "--samples", "3"])
         .output()
         .unwrap();
@@ -65,7 +68,7 @@ fn prepared_benchmark_repeats_one_result() {
         .join("fixtures/mage/prepared-v2/reference-clearcasting.prepared.json");
     let result = Command::new(env!("CARGO_BIN_EXE_forever-engine"))
         .args(["bench", "--infile"])
-        .arg(input)
+        .arg(fixtures::file(input))
         .args(["--warmups", "1", "--samples", "2"])
         .output()
         .unwrap();
@@ -99,7 +102,7 @@ fn check_reports_refusal_codes_beside_the_reasons() {
     };
     // A Serpent Sting tick outcome the runtime does not implement is a Hunter class limit.
     let mut hunter: serde_json::Value = serde_json::from_slice(
-        &std::fs::read(family.join("production-marksmanship-hunter.prepared.json")).unwrap(),
+        &fixtures::read(family.join("production-marksmanship-hunter.prepared.json")).unwrap(),
     )
     .unwrap();
     for effect in hunter["effects"].as_array_mut().unwrap() {
@@ -118,7 +121,9 @@ fn check_reports_refusal_codes_beside_the_reasons() {
         refused["refusals"],
         serde_json::json!([{"code": "class_limit", "reason": reason}])
     );
-    let supported = check(&family.join("frost-reference.prepared.json"));
+    let supported = check(&fixtures::file(
+        family.join("frost-reference.prepared.json"),
+    ));
     assert_eq!(supported["supported"], true);
     assert_eq!(supported["refusals"], serde_json::json!([]));
 }
@@ -135,7 +140,7 @@ fn changed_prepared(
     let source = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/protection-warrior-premier-shield-wall.prepared.json");
     let mut prepared: serde_json::Value =
-        serde_json::from_slice(&fs::read(source).unwrap()).unwrap();
+        serde_json::from_slice(&fixtures::read(source).unwrap()).unwrap();
     change(&mut prepared);
     let input = directory.join("input.prepared.json");
     fs::write(&input, serde_json::to_vec(&prepared).unwrap()).unwrap();

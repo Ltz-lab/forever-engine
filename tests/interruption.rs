@@ -7,6 +7,9 @@
 //! an interrupted run leaves the destination untouched: absent, or holding what it held
 //! before. A caller that finds a result file can trust that it is complete.
 
+#[path = "support/fixtures.rs"]
+mod fixtures;
+
 use std::{
     fs,
     path::{Path, PathBuf},
@@ -34,7 +37,7 @@ fn long_run(label: &str) -> (PathBuf, PathBuf) {
     fs::create_dir_all(&directory).unwrap();
     let source = fixture("mage/prepared-v2/feral-bear-druid-boomerang-pushback.prepared.json");
     let mut prepared: serde_json::Value =
-        serde_json::from_slice(&fs::read(source).unwrap()).unwrap();
+        serde_json::from_slice(&fixtures::read(source).unwrap()).unwrap();
     prepared["sim"]["iterations"] = 1_000_000.into();
     let input = directory.join("long.prepared.json");
     fs::write(&input, serde_json::to_vec(&prepared).unwrap()).unwrap();

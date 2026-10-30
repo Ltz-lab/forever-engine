@@ -12,7 +12,7 @@ mod prepare;
 fn elemental_json() -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/production-elemental-shaman.prepared.json");
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 fn reasons(value: Value) -> Vec<String> {
@@ -79,14 +79,15 @@ fn math_reading_an_operand_as_another_type_is_unsupported() {
 fn enhancement_json() -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/enhancement-shaman-no-battle-shout.prepared.json");
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 #[test]
 fn production_enhancement_request_is_supported() {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/production-enhancement-shaman.prepared.json");
-    let prepared: PreparedV2 = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+    let prepared: PreparedV2 =
+        serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
     assert_eq!(prepared_coverage(&prepared), Vec::<String>::new());
 }
 
@@ -141,7 +142,7 @@ fn other_basic_totems_are_rejected() {
 fn totem_remaining_time_needs_a_shaman() {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("fixtures/mage/prepared-v2/frost-reference.prepared.json");
-    let mut value: Value = serde_json::from_slice(&fs::read(path).unwrap()).unwrap();
+    let mut value: Value = serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap();
     value["player"]["rotation"]["priorityList"][0]["action"]["condition"] = json!({"cmp": {
         "op": "OpLe",
         "lhs": {"totemRemainingTime": {"totemType": "Fire"}},
@@ -153,7 +154,7 @@ fn totem_remaining_time_needs_a_shaman() {
 fn fixture(name: &str) -> Value {
     let path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join(format!("fixtures/mage/prepared-v2/{name}.prepared.json"));
-    serde_json::from_slice(&fs::read(path).unwrap()).unwrap()
+    serde_json::from_slice(&crate::fixtures::read(path).unwrap()).unwrap()
 }
 
 fn first_fight_log(mut value: Value) -> String {

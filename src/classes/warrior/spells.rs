@@ -1,0 +1,33 @@
+//! Warrior spell mechanics reusable by any Warrior spec that casts them.
+
+pub(crate) mod battle_shout;
+pub(crate) mod berserker_rage;
+pub(crate) mod bloodrage;
+pub(crate) mod bloodthirst;
+pub(crate) mod challenging_shout;
+pub(crate) mod charge;
+pub(crate) mod concussion_blow;
+pub(crate) mod death_wish;
+pub(crate) mod demoralizing_shout;
+pub(crate) mod disarm;
+pub(crate) mod execute;
+pub(crate) mod hamstring;
+pub(crate) mod heroic_strike;
+pub(crate) mod intercept;
+pub(crate) mod intimidating_shout;
+pub(crate) mod mortal_strike;
+pub(crate) mod overpower;
+pub(crate) mod rend;
+pub(crate) mod retaliation;
+pub(crate) mod revenge;
+pub(crate) mod shield_block;
+pub(crate) mod shield_slam;
+pub(crate) mod shield_wall;
+pub(crate) mod slam;
+pub(crate) mod spearing_strike;
+pub(crate) mod stances;
+pub(crate) mod sunder_armor;
+pub(crate) mod sweeping_strikes;
+pub(crate) mod taunt;
+pub(crate) mod thunder_clap;
+pub(crate) mod whirlwind;

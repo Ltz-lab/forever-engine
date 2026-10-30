@@ -1,0 +1,1687 @@
+{
+  "avgIterationDuration": 119.89869125429367,
+  "encounterMetrics": {
+    "targets": [
+      {
+        "actions": {
+          "{\"otherId\": \"OtherActionAttack\", \"tag\": 1}": {
+            "isMelee": true,
+            "spellSchool": 1,
+            "targets": [
+              {},
+              {
+                "unitIndex": 1
+              }
+            ]
+          },
+          "{\"otherId\": \"OtherActionAttack\", \"tag\": 2}": {
+            "isMelee": true,
+            "spellSchool": 1,
+            "targets": [
+              {},
+              {
+                "unitIndex": 1
+              }
+            ]
+          },
+          "{\"otherId\": \"OtherActionMove\"}": {
+            "isMelee": true,
+            "targets": [
+              {},
+              {
+                "unitIndex": 1
+              }
+            ]
+          }
+        },
+        "auras": {
+          "{\"otherId\": \"OtherActionMove\"}": {
+            "aggregatorData": {
+              "n": 3000
+            }
+          },
+          "{\"spellId\": 11198, \"tag\": -1}": {
+            "aggregatorData": {
+              "n": 3000,
+              "sumSq": 43355035.83751974
+            },
+            "effects": [
+              {
+                "category": "MajorArmorReduction",
+                "uptimeSecondsAvg": 119.89869125429367
+              }
+            ],
+            "procsAvg": 1,
+            "uptimeSecondsAvg": 119.89869125429395,
+            "uptimeSecondsStdev": 8.716791153519527
+          },
+          "{\"spellId\": 11374, \"tag\": -1}": {
+            "aggregatorData": {
+              "n": 3000,
+              "sumSq": 43355035.83751974
+            },
+            "effects": [
+              {
+                "category": "GiftOfArthasAura",
+                "uptimeSecondsAvg": 119.89869125429367
+              }
+            ],
+            "procsAvg": 1,
+            "uptimeSecondsAvg": 119.89869125429395,
+            "uptimeSecondsStdev": 8.716791153519527
+          },
+          "{\"spellId\": 11556}": {
+            "aggregatorData": {
+              "n": 3000
+            },
+            "effects": [
+              {
+                "category": "Demoralizing"
+              }
+            ]
+          },
+          "{\"spellId\": 11574}": {
+            "aggregatorData": {
+              "n": 3000
+            }
+          },
+          "{\"spellId\": 11581}": {
+            "aggregatorData": {
+              "n": 3000
+            },
+            "effects": [
+              {
+                "category": "AtkSpdReduction"
+              }
+            ]
+          },
+          "{\"spellId\": 11597, \"tag\": -1}": {
+            "aggregatorData": {
+              "n": 3000
+            },
+            "effects": [
+              {
+                "category": "MajorArmorReduction"
+              }
+            ],
+            "procsAvg": 5
+          },
+          "{\"spellId\": 11597}": {
+            "aggregatorData": {
+              "n": 3000
+            },
+            "effects": [
+              {
+                "category": "MajorArmorReduction"
+              }
+            ]
+          },
+          "{\"spellId\": 11717, \"tag\": -1}": {
+            "aggregatorData": {
+              "n": 3000,
+              "sumSq": 43355035.83751974
+            },
+            "effects": [
+              {
+                "category": "MinorArmorReductionArmorAdd"
+              }
+            ],
+            "procsAvg": 1,
+            "uptimeSecondsAvg": 119.89869125429395,
+            "uptimeSecondsStdev": 8.716791153519527
+          },
+          "{\"spellId\": 21992}": {
+            "aggregatorData": {
+              "n": 3000,
+              "sumSq": 34172581.927774645
+            },
+            "procsAvg": 23.339,
+            "uptimeSecondsAvg": 105.98076811912117,
+            "uptimeSecondsStdev": 12.60703896530103
+          },
+          "{\"spellId\": 27648}": {
+            "aggregatorData": {
+              "n": 3000,
+              "sumSq": 34143425.41339025
+            },
+            "effects": [
+              {
+                "category": "AtkSpdReduction",
+                "uptimeSecondsAvg": 105.93035604053334
+              }
+            ],
+            "procsAvg": 23.322333333333333,
+            "uptimeSecondsAvg": 105.9303560405333,
+            "uptimeSecondsStdev": 12.645215442580106
+          },
+          "{\"spellId\": 412609}": {
+            "aggregatorData": {
+              "n": 3000,
+              "sumSq": 42405589.011115976
+            },
+            "procsAvg": 77.731,
+            "uptimeSecondsAvg": 118.55104978769732,
+            "uptimeSecondsStdev": 8.991380943635345
+          },
+          "{\"spellId\": 676}": {
+            "aggregatorData": {
+              "n": 3000
+            }
+          },
+          "{\"spellId\": 9907, \"tag\": -1}": {
+            "aggregatorData": {
+              "n": 3000,
+              "sumSq": 43355035.83751974
+            },
+            "effects": [
+              {
+                "category": "MinorArmorReductionArmorAdd",
+                "uptimeSecondsAvg": 119.89869125429367
+              }
+            ],
+            "procsAvg": 1,
+            "uptimeSecondsAvg": 119.89869125429395,
+            "uptimeSecondsStdev": 8.716791153519527
+          }
+        },
+        "dps": {
+          "aggregatorData": {
+            "n": 3000
+          },
+          "hist": {
+            "0": 3000
+          },
+          "minSeed": "3041"
+        },
+        "dtps": {
+          "aggregatorData": {
+            "n": 3000,
+            "sumSq": 1858940926.4336514
+          },
+          "avg": 785.6631721925235,
+          "hist": {
+            "610": 1,
+            "630": 2,
+            "640": 3,
+            "650": 4,
+            "660": 11,
+            "670": 16,
+            "680": 21,
+            "690": 43,
+            "700": 44,
+            "710": 71,
+            "720": 100,
+            "730": 132,
+            "740": 153,
+            "750": 193,
+            "760": 224,
+            "770": 220,
+            "780": 232,
+            "790": 244,
+            "800": 253,
+            "810": 200,
+            "820": 193,
+            "830": 182,
+            "840": 155,
+            "850": 79,
+            "860": 64,
+            "870": 66,
+            "880": 30,
+            "890": 17,
+            "900": 21,
+            "910": 11,
+            "920": 4,
+            "930": 5,
+            "940": 3,
+            "950": 2,
+            "960": 1
+          },
+          "max": 958.4081270179336,
+          "maxSeed": "619",
+          "min": 606.7141796448752,
+          "minSeed": "138",
+          "stdev": 48.78888539683044
+        },
+        "hps": {
+          "aggregatorData": {
+            "n": 3000
+          },
+          "hist": {
+            "0": 3000
+          },
+          "minSeed": "3041"
+        },
+        "name": "Target 1",
+        "threat": {
+          "aggregatorData": {
+            "n": 3000
+          },
+          "hist": {
+            "0": 3000
+          },
+          "minSeed": "3041"
+        },
+        "tmi": {
+          "aggregatorData": {
+            "n": 3000
+          },
+          "hist": {
+            "0": 3000
+          },
+          "minSeed": "3041"
+        },
+        "tto": {
+          "aggregatorData": {
+            "n": 3000
+          },
+          "hist": {
+            "0": 3000
+          },
+          "minSeed": "3041"
+        }
+      }
+    ]
+  },
+  "firstIterationDuration": 127.246946363,
+  "iterationsDone": 3000,
+  "raidMetrics": {
+    "dps": {
+      "aggregatorData": {
+        "n": 3000,
+        "sumSq": 1858940926.4336514
+      },
+      "avg": 785.6631721925235,
+      "hist": {
+        "610": 1,
+        "630": 2,
+        "640": 3,
+        "650": 4,
+        "660": 11,
+        "670": 16,
+        "680": 21,
+        "690": 43,
+        "700": 44,
+        "710": 71,
+        "720": 100,
+        "730": 132,
+        "740": 153,
+        "750": 193,
+        "760": 224,
+        "770": 220,
+        "780": 232,
+        "790": 244,
+        "800": 253,
+        "810": 200,
+        "820": 193,
+        "830": 182,
+        "840": 155,
+        "850": 79,
+        "860": 64,
+        "870": 66,
+        "880": 30,
+        "890": 17,
+        "900": 21,
+        "910": 11,
+        "920": 4,
+        "930": 5,
+        "940": 3,
+        "950": 2,
+        "960": 1
+      },
+      "max": 958.4081270179336,
+      "maxSeed": "619",
+      "min": 606.7141796448752,
+      "minSeed": "138",
+      "stdev": 48.78888539683044
+    },
+    "hps": {
+      "aggregatorData": {
+        "n": 3000
+      },
+      "hist": {
+        "0": 3000
+      },
+      "minSeed": "3041"
+    },
+    "parties": [
+      {
+        "dps": {
+          "aggregatorData": {
+            "n": 3000,
+            "sumSq": 1858940926.4336514
+          },
+          "avg": 785.6631721925235,
+          "hist": {
+            "610": 1,
+            "630": 2,
+            "640": 3,
+            "650": 4,
+            "660": 11,
+            "670": 16,
+            "680": 21,
+            "690": 43,
+            "700": 44,
+            "710": 71,
+            "720": 100,
+            "730": 132,
+            "740": 153,
+            "750": 193,
+            "760": 224,
+            "770": 220,
+            "780": 232,
+            "790": 244,
+            "800": 253,
+            "810": 200,
+            "820": 193,
+            "830": 182,
+            "840": 155,
+            "850": 79,
+            "860": 64,
+            "870": 66,
+            "880": 30,
+            "890": 17,
+            "900": 21,
+            "910": 11,
+            "920": 4,
+            "930": 5,
+            "940": 3,
+            "950": 2,
+            "960": 1
+          },
+          "max": 958.4081270179336,
+          "maxSeed": "619",
+          "min": 606.7141796448752,
+          "minSeed": "138",
+          "stdev": 48.78888539683044
+        },
+        "hps": {
+          "aggregatorData": {
+            "n": 3000
+          },
+          "hist": {
+            "0": 3000
+          },
+          "minSeed": "3041"
+        },
+        "players": [
+          {
+            "actions": {
+              "{\"itemId\": 10646, \"tag\": 1}": {
+                "spellSchool": 4,
+                "targets": [
+                  {},
+                  {
+                    "critDamage": 211667.89835253762,
+                    "critRange": {
+                      "count": 235,
+                      "max": 1288.3059273259423,
+                      "min": 230.4714055002663,
+                      "total": 211667.89835253762
+                    },
+                    "crits": 235,
+                    "damage": 1911900.8669144595,
+                    "hitRange": {
+                      "count": 2748,
+                      "max": 865.4890148984042,
+                      "min": 139.40579732352506,
+                      "total": 1700232.9685619217
+                    },
+                    "hits": 2748,
+                    "misses": 17,
+                    "resistedCritDamage": 51964.627826166376,
+                    "resistedCrits": 77,
+                    "resistedDamage": 383184.7465906835,
+                    "resistedHits": 730,
+                    "threat": 1529520.6935315705,
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"itemId\": 10646}": {
+                "spellSchool": 4,
+                "targets": [
+                  {
+                    "casts": 3000,
+                    "critDamage": 221532.651654083,
+                    "critRange": {
+                      "count": 259,
+                      "max": 1120.2243897435183,
+                      "min": 230.11152108709746,
+                      "total": 221532.651654083
+                    },
+                    "crits": 259,
+                    "damage": 1748257.8504713976,
+                    "hitRange": {
+                      "count": 2711,
+                      "max": 749.9761796424143,
+                      "min": 118.69068339747554,
+                      "total": 1526725.1988173139
+                    },
+                    "hits": 2711,
+                    "misses": 30,
+                    "resistedCritDamage": 24652.38762312387,
+                    "resistedCrits": 41,
+                    "resistedDamage": 221286.6940606705,
+                    "resistedHits": 493,
+                    "threat": 1398606.2803771128
+                  },
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"itemId\": 13442}": {
+                "targets": [
+                  {
+                    "casts": 3000
+                  },
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"otherId\": \"OtherActionAttack\", \"tag\": 1}": {
+                "isMelee": true,
+                "spellSchool": 1,
+                "targets": [
+                  {
+                    "casts": 230321,
+                    "critDamage": 39497747.8645683,
+                    "critRange": {
+                      "count": 73735,
+                      "max": 819.2763539696125,
+                      "min": 427.3021129159616,
+                      "total": 39497747.8645683
+                    },
+                    "crits": 73735,
+                    "damage": 57857758.154250905,
+                    "dodges": 14810,
+                    "glanceDamage": 16063388.682224281,
+                    "glances": 92513,
+                    "hitRange": {
+                      "count": 8814,
+                      "max": 407.02731664713525,
+                      "min": 213.66490952263294,
+                      "total": 2296621.607458083
+                    },
+                    "hits": 8814,
+                    "misses": 40449,
+                    "threat": 46286206.52340059
+                  },
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"otherId\": \"OtherActionAttack\", \"tag\": 25584}": {
+                "isMelee": true,
+                "spellSchool": 1,
+                "targets": [
+                  {
+                    "casts": 67055,
+                    "critDamage": 12710275.958573753,
+                    "critRange": {
+                      "count": 21435,
+                      "max": 819.5221129838251,
+                      "min": 484.02930063901323,
+                      "total": 12710275.958573753
+                    },
+                    "crits": 21435,
+                    "damage": 18585489.48928094,
+                    "dodges": 4429,
+                    "glanceDamage": 5151401.142837959,
+                    "glances": 26825,
+                    "hitRange": {
+                      "count": 2511,
+                      "max": 407.96783426721754,
+                      "min": 242.0282698829644,
+                      "total": 723812.3878691916
+                    },
+                    "hits": 2511,
+                    "misses": 11855,
+                    "threat": 14868391.591424733
+                  },
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"otherId\": \"OtherActionAttack\", \"tag\": 2}": {
+                "isMelee": true,
+                "spellSchool": 1,
+                "targets": [
+                  {
+                    "casts": 181122,
+                    "critDamage": 25701009.69578761,
+                    "critRange": {
+                      "count": 60591,
+                      "max": 624.3459832311927,
+                      "min": 352.834548010623,
+                      "total": 25701009.69578761
+                    },
+                    "crits": 60591,
+                    "damage": 40284818.512410395,
+                    "dodges": 11635,
+                    "glanceDamage": 9929340.665008664,
+                    "glances": 72706,
+                    "hitRange": {
+                      "count": 22677,
+                      "max": 311.7301620112248,
+                      "min": 176.42111933363586,
+                      "total": 4654468.151614086
+                    },
+                    "hits": 22677,
+                    "misses": 13513,
+                    "threat": 32227854.809928283
+                  },
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"otherId\": \"OtherActionMove\"}": {
+                "isMelee": true,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"otherId\": \"OtherActionRageGain\"}": {
+                "targets": [
+                  {
+                    "casts": 427480,
+                    "threat": 2693201.037012528
+                  },
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 11556}": {
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 11574}": {
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 11578}": {
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 11581}": {
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 11585}": {
+                "isMelee": true,
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 11597}": {
+                "isMelee": true,
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 11605}": {
+                "isMelee": true,
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 1161}": {
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 12328}": {
+                "targets": [
+                  {
+                    "castTimeMs": 4500000,
+                    "casts": 3000
+                  },
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 15851}": {
+                "isPassive": true,
+                "spellSchool": 4,
+                "targets": [
+                  {
+                    "critDamage": 284566.443903518,
+                    "critRange": {
+                      "count": 3088,
+                      "max": 109.49650773610159,
+                      "min": 21.46670364684948,
+                      "total": 284566.443903518
+                    },
+                    "crits": 3088,
+                    "damage": 1034179.0013972515,
+                    "hitRange": {
+                      "count": 12260,
+                      "max": 72.99959660087652,
+                      "min": 14.314860404578468,
+                      "total": 749612.5574937307
+                    },
+                    "hits": 12260,
+                    "misses": 1030,
+                    "resistedCritDamage": 34707.836897057074,
+                    "resistedCrits": 530,
+                    "resistedDamage": 131189.25189694756,
+                    "resistedHits": 2216,
+                    "threat": 827343.2011178026
+                  },
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 1672}": {
+                "isMelee": true,
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 1680, \"tag\": 1}": {
+                "isMelee": true,
+                "spellSchool": 1,
+                "targets": [
+                  {
+                    "castTimeMs": 37539000,
+                    "casts": 25026,
+                    "critDamage": 5518415.415712357,
+                    "critRange": {
+                      "count": 8223,
+                      "max": 964.9117261787495,
+                      "min": 567.4742815303601,
+                      "total": 5518415.415712357
+                    },
+                    "crits": 8223,
+                    "damage": 10026779.229788078,
+                    "dodges": 1593,
+                    "hitRange": {
+                      "count": 15210,
+                      "max": 418.25089752109454,
+                      "min": 257.9349383113762,
+                      "total": 4508363.814075684
+                    },
+                    "hits": 15210,
+                    "threat": 10026779.22978808
+                  },
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 1680, \"tag\": 2}": {
+                "isMelee": true,
+                "isPassive": true,
+                "spellSchool": 1,
+                "targets": [
+                  {
+                    "critDamage": 3715033.688548278,
+                    "critRange": {
+                      "count": 8159,
+                      "max": 653.7361095262158,
+                      "min": 388.160713194502,
+                      "total": 3715033.688548278
+                    },
+                    "crits": 8159,
+                    "damage": 6772996.756716699,
+                    "dodges": 1666,
+                    "hitRange": {
+                      "count": 15201,
+                      "max": 290.2868896477696,
+                      "min": 176.41864184014383,
+                      "total": 3057963.068168413
+                    },
+                    "hits": 15201,
+                    "threat": 6772996.756716699
+                  },
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 1719}": {
+                "targets": [
+                  {
+                    "castTimeMs": 4500000,
+                    "casts": 3000
+                  },
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 18499}": {
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 20230}": {
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 20240}": {
+                "isMelee": true,
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 20560}": {
+                "isMelee": true,
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 20569}": {
+                "isMelee": true,
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 20617}": {
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 20662}": {
+                "isMelee": true,
+                "spellSchool": 1,
+                "targets": [
+                  {
+                    "castTimeMs": 66037500,
+                    "casts": 44025,
+                    "critDamage": 56663681.81772738,
+                    "critRange": {
+                      "count": 26700,
+                      "max": 4389.743298332304,
+                      "min": 1217.1928042001236,
+                      "total": 56663681.81772738
+                    },
+                    "crits": 26700,
+                    "damage": 67889769.49222264,
+                    "dodges": 2870,
+                    "hitRange": {
+                      "count": 14455,
+                      "max": 1995.3378628783198,
+                      "min": 566.0088017294626,
+                      "total": 11226087.674495157
+                    },
+                    "hits": 14455,
+                    "threat": 67889769.49222264
+                  },
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 21992, \"tag\": 1}": {
+                "spellSchool": 8,
+                "targets": [
+                  {
+                    "casts": 74781,
+                    "critDamage": 6156900,
+                    "critRange": {
+                      "count": 14562,
+                      "max": 450,
+                      "min": 112.5,
+                      "total": 6156900
+                    },
+                    "crits": 14562,
+                    "damage": 21777675,
+                    "hitRange": {
+                      "count": 55405,
+                      "max": 300,
+                      "min": 75,
+                      "total": 15620775
+                    },
+                    "hits": 55405,
+                    "misses": 4814,
+                    "resistedCritDamage": 801000,
+                    "resistedCrits": 2660,
+                    "resistedDamage": 2840175,
+                    "resistedHits": 10133,
+                    "threat": 8711070
+                  },
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 21992, \"tag\": 2}": {
+                "spellSchool": 8,
+                "targets": [
+                  {
+                    "casts": 74781,
+                    "hits": 70017,
+                    "misses": 4764,
+                    "resistedHits": 12599,
+                    "threat": 3528856.80000001
+                  },
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 23894}": {
+                "isMelee": true,
+                "spellSchool": 1,
+                "targets": [
+                  {
+                    "castTimeMs": 73185000,
+                    "casts": 48790,
+                    "critDamage": 22466336.596108697,
+                    "critRange": {
+                      "count": 15829,
+                      "max": 2068.471525633107,
+                      "min": 1334.84830142063,
+                      "total": 22466336.596108697
+                    },
+                    "crits": 15829,
+                    "damage": 41252766.315688506,
+                    "dodges": 3113,
+                    "hitRange": {
+                      "count": 29848,
+                      "max": 940.2143298332304,
+                      "min": 606.7492279184681,
+                      "total": 18786429.71957997
+                    },
+                    "hits": 29848,
+                    "threat": 33002213.052550986
+                  },
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 2457}": {
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 2458}": {
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 25286}": {
+                "isMelee": true,
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 25288}": {
+                "isMelee": true,
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 25289}": {
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 2565}": {
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 2687}": {
+                "targets": [
+                  {
+                    "casts": 7476
+                  },
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 355}": {
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 402927}": {
+                "isMelee": true,
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 412609}": {
+                "spellSchool": 1,
+                "targets": [
+                  {
+                    "casts": 233193,
+                    "damage": 11641440.62736293,
+                    "threat": 9313152.501890339,
+                    "tickDamage": 11641440.62736293,
+                    "tickRange": {
+                      "count": 116974,
+                      "max": 238.28957262735094,
+                      "min": 19.924999999999997,
+                      "total": 11641440.62736293
+                    },
+                    "ticks": 116974
+                  },
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 5246}": {
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 6554}": {
+                "isMelee": true,
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 676}": {
+                "spellSchool": 1,
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 71}": {
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 7373}": {
+                "isMelee": true,
+                "spellSchool": 1,
+                "targets": [
+                  {
+                    "castTimeMs": 89857500,
+                    "casts": 59905,
+                    "critDamage": 1902059.9953057491,
+                    "critRange": {
+                      "count": 18521,
+                      "max": 118.49561457689931,
+                      "min": 101.67967881408278,
+                      "total": 1902059.9953057491
+                    },
+                    "crits": 18521,
+                    "damage": 3636538.6030883263,
+                    "dodges": 3876,
+                    "hitRange": {
+                      "count": 37508,
+                      "max": 53.861642989499686,
+                      "min": 46.218035824583076,
+                      "total": 1734478.6077825376
+                    },
+                    "hits": 37508,
+                    "threat": 9687670.60308833
+                  },
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              },
+              "{\"spellId\": 871}": {
+                "targets": [
+                  {},
+                  {
+                    "unitIndex": 1
+                  }
+                ]
+              }
+            },
+            "auras": {
+              "{\"itemId\": 13442}": {
+                "aggregatorData": {
+                  "n": 3000,
+                  "sumSq": 1064445.89918645
+                },
+                "procsAvg": 1,
+                "uptimeSecondsAvg": 18.745495686669013,
+                "uptimeSecondsStdev": 1.8497813897566662
+              },
+              "{\"otherId\": \"OtherActionMove\"}": {
+                "aggregatorData": {
+                  "n": 3000
+                }
+              },
+              "{\"spellId\": 10610, \"tag\": -1}": {
+                "aggregatorData": {
+                  "n": 3000,
+                  "sumSq": 295168.76617532904
+                },
+                "effects": [
+                  {
+                    "category": "WindfuryTotemAttackPowerAdd",
+                    "uptimeSecondsAvg": 9.52064274007
+                  }
+                ],
+                "procsAvg": 22.351666666666667,
+                "uptimeSecondsAvg": 9.52064274006998,
+                "uptimeSecondsStdev": 2.7833344285339616
+              },
+              "{\"spellId\": 11578}": {
+                "aggregatorData": {
+                  "n": 3000
+                }
+              },
+              "{\"spellId\": 12328}": {
+                "aggregatorData": {
+                  "n": 3000,
+                  "sumSq": 2535034.0562794595
+                },
+                "procsAvg": 1,
+                "uptimeSecondsAvg": 29.027633062125698,
+                "uptimeSecondsStdev": 1.5517315823750666
+              },
+              "{\"spellId\": 1282733}": {
+                "aggregatorData": {
+                  "n": 3000,
+                  "sumSq": 9583788.34337585
+                },
+                "procsAvg": 14.664,
+                "uptimeSecondsAvg": 55.18563834699997,
+                "uptimeSecondsStdev": 12.212347632324542
+              },
+              "{\"spellId\": 12966}": {
+                "aggregatorData": {
+                  "n": 3000,
+                  "sumSq": 30433629.33634842
+                },
+                "procsAvg": 75.01133333333334,
+                "uptimeSecondsAvg": 100.22902488995454,
+                "uptimeSecondsStdev": 9.934066726422389
+              },
+              "{\"spellId\": 1719}": {
+                "aggregatorData": {
+                  "n": 3000,
+                  "sumSq": 674700.1697571115
+                },
+                "procsAvg": 1,
+                "uptimeSecondsAvg": 14.996473677316663,
+                "uptimeSecondsStdev": 0.07637952115758016
+              },
+              "{\"spellId\": 18499}": {
+                "aggregatorData": {
+                  "n": 3000
+                }
+              },
+              "{\"spellId\": 20007, \"tag\": 1}": {
+                "aggregatorData": {
+                  "n": 3000
+                }
+              },
+              "{\"spellId\": 20007, \"tag\": 2}": {
+                "aggregatorData": {
+                  "n": 3000,
+                  "sumSq": 3679677.4093073052
+                },
+                "procsAvg": 2.431,
+                "uptimeSecondsAvg": 30.292105322926204,
+                "uptimeSecondsStdev": 17.576902216844534
+              },
+              "{\"spellId\": 20230}": {
+                "aggregatorData": {
+                  "n": 3000
+                }
+              },
+              "{\"spellId\": 20569, \"tag\": 1}": {
+                "aggregatorData": {
+                  "n": 3000
+                }
+              },
+              "{\"spellId\": 20617}": {
+                "aggregatorData": {
+                  "n": 3000
+                }
+              },
+              "{\"spellId\": 21850, \"tag\": -1}": {
+                "aggregatorData": {
+                  "n": 3000,
+                  "sumSq": 43355035.83751974
+                },
+                "effects": [
+                  {
+                    "category": "ResistanceFireFireResistanceAdd",
+                    "uptimeSecondsAvg": 119.89869125429367
+                  },
+                  {
+                    "category": "ResistanceNatureNatureResistanceAdd",
+                    "uptimeSecondsAvg": 119.89869125429367
+                  },
+                  {
+                    "category": "ResistanceFrostFrostResistanceAdd",
+                    "uptimeSecondsAvg": 119.89869125429367
+                  },
+                  {
+                    "category": "ResistanceShadowShadowResistanceAdd",
+                    "uptimeSecondsAvg": 119.89869125429367
+                  },
+                  {
+                    "category": "ResistanceArcaneArcaneResistanceAdd",
+                    "uptimeSecondsAvg": 119.89869125429367
+                  }
+                ],
+                "procsAvg": 1,
+                "uptimeSecondsAvg": 119.89869125429395,
+                "uptimeSecondsStdev": 8.716791153519527
+              },
+              "{\"spellId\": 2457}": {
+                "aggregatorData": {
+                  "n": 3000
+                },
+                "effects": [
+                  {
+                    "category": "Stance"
+                  }
+                ]
+              },
+              "{\"spellId\": 2458}": {
+                "aggregatorData": {
+                  "n": 3000,
+                  "sumSq": 43355035.83751974
+                },
+                "effects": [
+                  {
+                    "category": "Stance",
+                    "uptimeSecondsAvg": 119.89869125429367
+                  }
+                ],
+                "procsAvg": 1,
+                "uptimeSecondsAvg": 119.89869125429395,
+                "uptimeSecondsStdev": 8.716791153519527
+              },
+              "{\"spellId\": 24932, \"tag\": -1}": {
+                "aggregatorData": {
+                  "n": 3000,
+                  "sumSq": 43355035.83751974
+                },
+                "effects": [
+                  {
+                    "category": "LeaderOfThePack",
+                    "uptimeSecondsAvg": 119.89869125429367
+                  }
+                ],
+                "procsAvg": 1,
+                "uptimeSecondsAvg": 119.89869125429395,
+                "uptimeSecondsStdev": 8.716791153519527
+              },
+              "{\"spellId\": 25286, \"tag\": 1}": {
+                "aggregatorData": {
+                  "n": 3000
+                }
+              },
+              "{\"spellId\": 25288}": {
+                "aggregatorData": {
+                  "n": 3000
+                }
+              },
+              "{\"spellId\": 25289, \"tag\": -1}": {
+                "aggregatorData": {
+                  "n": 3000,
+                  "sumSq": 43355035.83751974
+                },
+                "effects": [
+                  {
+                    "category": "BattleShout",
+                    "uptimeSecondsAvg": 119.89869125429367
+                  }
+                ],
+                "procsAvg": 1,
+                "uptimeSecondsAvg": 119.89869125429395,
+                "uptimeSecondsStdev": 8.716791153519527
+              },
+              "{\"spellId\": 25289}": {
+                "aggregatorData": {
+                  "n": 3000
+                },
+                "effects": [
+                  {
+                    "category": "BattleShout"
+                  }
+                ]
+              },
+              "{\"spellId\": 25362, \"tag\": -1}": {
+                "aggregatorData": {
+                  "n": 3000,
+                  "sumSq": 43355035.83751974
+                },
+                "effects": [
+                  {
+                    "category": "StrengthOfEarthTotemStrengthAdd",
+                    "uptimeSecondsAvg": 119.89869125429367
+                  }
+                ],
+                "procsAvg": 1,
+                "uptimeSecondsAvg": 119.89869125429395,
+                "uptimeSecondsStdev": 8.716791153519527
+              },
+              "{\"spellId\": 25580, \"tag\": -1}": {
+                "aggregatorData": {
+                  "n": 3000,
+                  "sumSq": 43355035.83751974
+                },
+                "procsAvg": 1,
+                "uptimeSecondsAvg": 119.89869125429395,
+                "uptimeSecondsStdev": 8.716791153519527
+              },
+              "{\"spellId\": 25587, \"tag\": -1}": {
+                "aggregatorData": {
+                  "n": 3000,
+                  "sumSq": 43355035.83751974
+                },
+                "effects": [
+                  {
+                    "category": "FlametongueTotem",
+                    "uptimeSecondsAvg": 119.89869125429367
+                  },
+                  {
+                    "category": "WindfuryTotem",
+                    "uptimeSecondsAvg": 119.89869125429367
+                  }
+                ],
+                "procsAvg": 24.487333333333332,
+                "uptimeSecondsAvg": 119.89869125429395,
+                "uptimeSecondsStdev": 8.716791153519527
+              },
+              "{\"spellId\": 2565}": {
+                "aggregatorData": {
+                  "n": 3000
+                }
+              },
+              "{\"spellId\": 25898, \"tag\": -1}": {
+                "aggregatorData": {
+                  "n": 3000,
+                  "sumSq": 43355035.83751974
+                },
+                "procsAvg": 1,
+                "uptimeSecondsAvg": 119.89869125429395,
+                "uptimeSecondsStdev": 8.716791153519527
+              },
+              "{\"spellId\": 25916, \"tag\": -1}": {
+                "aggregatorData": {
+                  "n": 3000,
+                  "sumSq": 43355035.83751974
+                },
+                "procsAvg": 1,
+                "uptimeSecondsAvg": 119.89869125429395,
+                "uptimeSecondsStdev": 8.716791153519527
+              },
+              "{\"spellId\": 402975}": {
+                "aggregatorData": {
+                  "n": 3000
+                }
+              },
+              "{\"spellId\": 71}": {
+                "aggregatorData": {
+                  "n": 3000
+                },
+                "effects": [
+                  {
+                    "category": "Stance"
+                  }
+                ]
+              },
+              "{\"spellId\": 871}": {
+                "aggregatorData": {
+                  "n": 3000
+                }
+              }
+            },
+            "dps": {
+              "aggregatorData": {
+                "n": 3000,
+                "sumSq": 1858940926.4336514
+              },
+              "avg": 785.6631721925235,
+              "hist": {
+                "610": 1,
+                "630": 2,
+                "640": 3,
+                "650": 4,
+                "660": 11,
+                "670": 16,
+                "680": 21,
+                "690": 43,
+                "700": 44,
+                "710": 71,
+                "720": 100,
+                "730": 132,
+                "740": 153,
+                "750": 193,
+                "760": 224,
+                "770": 220,
+                "780": 232,
+                "790": 244,
+                "800": 253,
+                "810": 200,
+                "820": 193,
+                "830": 182,
+                "840": 155,
+                "850": 79,
+                "860": 64,
+                "870": 66,
+                "880": 30,
+                "890": 17,
+                "900": 21,
+                "910": 11,
+                "920": 4,
+                "930": 5,
+                "940": 3,
+                "950": 2,
+                "960": 1
+              },
+              "max": 958.4081270179336,
+              "maxSeed": "619",
+              "min": 606.7141796448752,
+              "minSeed": "138",
+              "stdev": 48.78888539683044
+            },
+            "dtps": {
+              "aggregatorData": {
+                "n": 3000,
+                "sumSq": 92484.27169681941
+              },
+              "avg": 5.340052623439548,
+              "hist": {
+                "0": 1243,
+                "10": 1757
+              },
+              "max": 12.070301389336482,
+              "maxSeed": "2151",
+              "minSeed": "2974",
+              "stdev": 1.5205027275552234
+            },
+            "hps": {
+              "aggregatorData": {
+                "n": 3000
+              },
+              "hist": {
+                "0": 3000
+              },
+              "minSeed": "3041"
+            },
+            "name": "warrior",
+            "resources": {
+              "{\"itemId\": 13442}": {
+                "actualGain": 178900.64739383795,
+                "events": 3000,
+                "gain": 180000,
+                "type": "ResourceTypeRage"
+              },
+              "{\"otherId\": \"OtherActionAttack\", \"tag\": 1}": {
+                "actualGain": 1475337.847339562,
+                "events": 175062,
+                "gain": 1635591.4780038237,
+                "type": "ResourceTypeRage"
+              },
+              "{\"otherId\": \"OtherActionAttack\", \"tag\": 25584}": {
+                "actualGain": 424606.6000620285,
+                "events": 50771,
+                "gain": 474682.244000011,
+                "type": "ResourceTypeRage"
+              },
+              "{\"otherId\": \"OtherActionAttack\", \"tag\": 2}": {
+                "actualGain": 1213500.9223819808,
+                "events": 155974,
+                "gain": 1348766.8199980848,
+                "type": "ResourceTypeRage"
+              },
+              "{\"otherId\": \"OtherActionDamageTaken\"}": {
+                "actualGain": 4366.278611055989,
+                "events": 2983,
+                "gain": 4624.26982773458,
+                "type": "ResourceTypeRage"
+              },
+              "{\"otherId\": \"OtherActionDamageTaken\"} #2": {
+                "actualGain": -4437293.666913842,
+                "events": 10459,
+                "gain": -4437293.666913842,
+                "type": "ResourceTypeHealth"
+              },
+              "{\"otherId\": \"OtherActionRefund\"}": {
+                "actualGain": 128680,
+                "events": 9859,
+                "gain": 128680,
+                "type": "ResourceTypeRage"
+              },
+              "{\"spellId\": 12296}": {
+                "actualGain": 95662.54391960322,
+                "events": 118380,
+                "gain": 118380,
+                "type": "ResourceTypeRage"
+              },
+              "{\"spellId\": 12328}": {
+                "actualGain": -30000,
+                "events": 3000,
+                "gain": -30000,
+                "type": "ResourceTypeRage"
+              },
+              "{\"spellId\": 12964}": {
+                "actualGain": 194226.3191245327,
+                "events": 228874,
+                "gain": 228874,
+                "type": "ResourceTypeRage"
+              },
+              "{\"spellId\": 1680, \"tag\": 1}": {
+                "actualGain": -550572,
+                "events": 25026,
+                "gain": -550572,
+                "type": "ResourceTypeRage"
+              },
+              "{\"spellId\": 20007}": {
+                "actualGain": 721636.015433369,
+                "events": 7293,
+                "gain": 730579.9782601442,
+                "type": "ResourceTypeHealth"
+              },
+              "{\"spellId\": 20662}": {
+                "actualGain": -1247885.2676458338,
+                "events": 44025,
+                "gain": -1247885.2676458338,
+                "type": "ResourceTypeRage"
+              },
+              "{\"spellId\": 23894}": {
+                "actualGain": -1463700,
+                "events": 48790,
+                "gain": -1463700,
+                "type": "ResourceTypeRage"
+              },
+              "{\"spellId\": 2687}": {
+                "actualGain": 204510.74881515902,
+                "events": 77231,
+                "gain": 216772.5,
+                "type": "ResourceTypeRage"
+              },
+              "{\"spellId\": 7373}": {
+                "actualGain": -599050,
+                "events": 59905,
+                "gain": -599050,
+                "type": "ResourceTypeRage"
+              }
+            },
+            "threat": {
+              "aggregatorData": {
+                "n": 3000,
+                "sumSq": 1423355075.9322946
+              },
+              "avg": 687.5311869293782,
+              "hist": {
+                "540": 1,
+                "550": 1,
+                "560": 3,
+                "570": 7,
+                "580": 8,
+                "590": 27,
+                "600": 35,
+                "610": 50,
+                "620": 74,
+                "630": 103,
+                "640": 167,
+                "650": 169,
+                "660": 242,
+                "670": 247,
+                "680": 279,
+                "690": 274,
+                "700": 306,
+                "710": 222,
+                "720": 231,
+                "730": 189,
+                "740": 133,
+                "750": 71,
+                "760": 71,
+                "770": 34,
+                "780": 23,
+                "790": 14,
+                "800": 9,
+                "810": 4,
+                "820": 4,
+                "830": 1,
+                "840": 1
+              },
+              "max": 839.147342235566,
+              "maxSeed": "619",
+              "min": 536.0326926293523,
+              "minSeed": "138",
+              "stdev": 41.86357577789901
+            },
+            "tmi": {
+              "aggregatorData": {
+                "n": 3000
+              },
+              "hist": {
+                "0": 3000
+              },
+              "minSeed": "3041"
+            },
+            "tto": {
+              "aggregatorData": {
+                "n": 3000
+              },
+              "hist": {
+                "0": 3000
+              },
+              "minSeed": "3041"
+            },
+            "unitIndex": 1
+          }
+        ]
+      }
+    ]
+  }
+}

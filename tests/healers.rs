@@ -1,0 +1,527 @@
+//! MythicSim's healer sims for the Priest, the Restoration Druid and the Restoration Shaman,
+//! which Rust alone runs: the Go engine has none of their heals, so there is no Go golden (the
+//! Holy Paladin has Go goldens, in the fixture family). Each request in `fixtures/healers`
+//! prepares in Rust, passes the gate and heals.
+//!
+//! Under Forever's rules a healer sim counts only the share of each heal real healers do not
+//! overheal (`prepare::overheal`), so each heal line logs what heals and the overhealing beside
+//! it; their sum is the heal the client rows give. A heal over time's tick rolls the healing crit
+//! there too, as its row states Periodic Can Crit.
+//!
+//! Two kinds of check:
+//!
+//! - The first fight's log lines below pin one heal of each kind to the amount its client rows
+//!   give, worked out by hand in the comments: the rank's amount at level 60, its coefficient on
+//!   the healing power the line states, and the talents' client modifiers at their ranks.
+//! - `<name>.rust-golden.json` keeps the whole fight's healing by spell, as Rust made it, so a
+//!   change that moves it shows. It is not evidence that the numbers are right; the log lines
+//!   are. Regenerate it with `UPDATE_HEALER_GOLDENS=1 cargo test --test healers` after a change
+//!   that should move it, and say why in the commit.
+
+use forever_engine::{check_prepared, prepare, prepare_json_with, simulate_prepared, Rules};
+use serde_json::{json, Map, Value};
+use std::{fs, path::Path};
+
+fn fixtures() -> &'static Path {
+    Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/fixtures/healers"))
+}
+
+/// The fight's result for a healer request: prepared in Rust, gated and simulated.
+fn run(name: &str) -> Value {
+    let request = fs::read(fixtures().join(format!("{name}.request.json"))).unwrap();
+    let prepared = prepare(&request, "rust").unwrap_or_else(|err| panic!("{name}: {err:?}"));
+    check_prepared(&prepared).unwrap_or_else(|err| panic!("{name}: {err:?}"));
+    simulate_prepared(&prepared)
+        .unwrap_or_else(|err| panic!("{name}: {err:?}"))
+        .result
+}
+
+/// [`run`] under the Go reference's rules, where no heal follows the party's damage.
+fn run_reference(name: &str) -> Value {
+    let request = fs::read(fixtures().join(format!("{name}.request.json"))).unwrap();
+    let value = prepare_json_with(&request, "rust", Rules::GoReference)
+        .unwrap_or_else(|err| panic!("{name}: {err:?}"));
+    assert!(
+        !value.to_string().contains("\"party\""),
+        "{name}: the reference has no party damage"
+    );
+    let prepared = serde_json::from_value(value).unwrap();
+    check_prepared(&prepared).unwrap_or_else(|err| panic!("{name}: {err:?}"));
+    simulate_prepared(&prepared)
+        .unwrap_or_else(|err| panic!("{name}: {err:?}"))
+        .result
+}
+
+/// A heal's players reached a cast: its hits and crits over its casts.
+fn players_a_cast(result: &Value, spell: i64) -> f64 {
+    let action = player(result)["actions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|action| action["id"]["spellId"] == spell)
+        .unwrap();
+    let sum = |key: &str| -> f64 {
+        action["targets"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|target| target[key].as_f64().unwrap_or(0.0))
+            .sum()
+    };
+    (sum("hits") + sum("crits")) / sum("casts")
+}
+
+fn player(result: &Value) -> &Value {
+    &result["raidMetrics"]["parties"][0]["players"][0]
+}
+
+/// The player's healing per second and, by action, what each did in every fight together.
+fn summary(result: &Value) -> Value {
+    let player = player(result);
+    let mut actions = Map::new();
+    for action in player["actions"].as_array().unwrap() {
+        let sum = |key: &str| -> f64 {
+            action["targets"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|target| target[key].as_f64().unwrap_or(0.0))
+                .sum()
+        };
+        let healing = sum("healing") + sum("shielding");
+        if healing == 0.0 {
+            continue;
+        }
+        actions.insert(
+            action["id"].to_string(),
+            json!({
+                "casts": sum("casts"), "hits": sum("hits"), "crits": sum("crits"),
+                "ticks": sum("ticks"), "crit_ticks": sum("critTicks"),
+                "healing": sum("healing"), "shielding": sum("shielding"),
+                "overhealing": sum("overhealing"),
+            }),
+        );
+    }
+    json!({"hps": player["hps"]["avg"], "seconds_oom": player["secondsOomAvg"], "actions": actions})
+}
+
+/// The summary equals its golden, or the golden is rewritten when asked.
+fn golden(name: &str, result: &Value) {
+    let path = fixtures().join(format!("{name}.rust-golden.json"));
+    let actual = summary(result);
+    if std::env::var_os("UPDATE_HEALER_GOLDENS").is_some() {
+        fs::write(&path, serde_json::to_string_pretty(&actual).unwrap() + "\n").unwrap();
+        return;
+    }
+    let expected: Value = serde_json::from_slice(&fs::read(&path).unwrap()).unwrap();
+    assert_eq!(
+        actual, expected,
+        "{name}: the healing moved from its golden"
+    );
+}
+
+/// The first fight's log has every one of these lines.
+fn logs(name: &str, result: &Value, lines: &[&str]) {
+    let log = result["logs"].as_str().unwrap();
+    for line in lines {
+        assert!(
+            log.contains(line),
+            "{name}: the first fight never logs {line:?}"
+        );
+    }
+}
+
+/// The 38/13 Holy priest: Spiritual Healing 3 (10% direct and periodic), Improved Renew 3
+/// (15%), Twin Disciplines 5 (5% periodic on Renew), Improved Power Word: Shield 3 (20%), on
+/// 268.2 healing power.
+#[test]
+fn holy_priest_heals_as_its_rows_state() {
+    let result = run("holy-priest");
+    logs(
+        "holy-priest",
+        &result,
+        &[
+            // Prayer of Mending rank 1 (401859): 172 + 0.429 x 268.2 = 287.06, then +10%, on
+            // each charge that heals.
+            "{SpellID: 401859} [DEBUG] HealingPower: 268.2, BaseHealing:287.1, AfterCasterMods:315.8",
+            // Power Word: Shield rank 10 (10901): 928 + 0.1 x 268.2 = 954.82, then +20%.
+            "{SpellID: 10901} Shield for 1145.790.",
+            // Renew rank 10 (25315): 166 + 0.2 x 268.2 = 219.64 a tick, then 1.10 x 1.15 x 1.05,
+            // 291.750, of which Renew's 16.06% is overhealing.
+            "{SpellID: 25315} tick Hit for 244.895 healing, 46.855 overhealing.",
+        ],
+    );
+    // Under Forever's rules a charge heals only when the player holding it is hit
+    // (`prepare::party_damage`): the tank about once a second, the others about once every five
+    // seconds. Recast every ten seconds or so, a cast heals about three charges before the next
+    // replaces it; the same process drawn a million times in Python gives 2.97 at ten seconds
+    // and 3.03 at 10.3.
+    let charges = players_a_cast(&result, 401859);
+    assert!(
+        (2.85..=3.2).contains(&charges),
+        "{charges} Prayer of Mending charges a cast"
+    );
+    // The Go reference's rules heal all five charges at once.
+    let reference = run_reference("holy-priest");
+    assert_eq!(players_a_cast(&reference, 401859), 5.0);
+    golden("holy-priest", &result);
+}
+
+/// The 46-point Restoration druid: Gift of Nature 5 (10% direct and periodic), Improved
+/// Rejuvenation 3 (15%), Genesis 5 (5% periodic), Nature's Splendor, on 302 healing power.
+#[test]
+fn restoration_druid_heals_as_its_rows_state() {
+    let result = run("restoration-druid");
+    logs(
+        "restoration-druid",
+        &result,
+        &[
+            // Wild Growth rank 3 (1238215): 97 + 0.033 x 302 = 106.97 a tick, then +10%, on
+            // each of five players, 117.663, of which a group heal's 24.58% is overhealing.
+            "{SpellID: 1238215} tick Hit for 88.741 healing, 28.921 overhealing.",
+            // Rejuvenation rank 11 (25299): 194 + 0.2 x 302 = 254.4 a tick, then 1.10 x 1.15 x
+            // 1.05, 337.907, of which Rejuvenation's 17.76% is overhealing.
+            "{SpellID: 25299} tick Hit for 277.895 healing, 60.012 overhealing.",
+            // Swiftmend consumes that Rejuvenation: its five ticks with Nature's Splendor, 1689.5,
+            // then Gift of Nature's 10% on Swiftmend's own direct heal.
+            "{SpellID: 18562} [DEBUG] HealingPower: 302.0, BaseHealing:1689.5, AfterCasterMods:1858.5",
+        ],
+    );
+    golden("restoration-druid", &result);
+}
+
+/// The 40-point Restoration shaman: Purification 5 (10% direct and periodic), Healing Way 3
+/// (25% on Healing Wave), Restorative Totems 5 (25% on Healing Stream's ticks).
+#[test]
+fn restoration_shaman_heals_as_its_rows_state() {
+    let result = run("restoration-shaman");
+    let log = result["logs"].as_str().unwrap();
+    // Chain Heal rank 3 (10623) lands on up to three players, each with its own roll of 473 to
+    // 539 plus 0.714 of healing power, the second at half and the third at a quarter. A cast's
+    // first heal is the largest, so a heal larger than the one before starts the next cast.
+    let field = |line: &str, name: &str| -> f64 {
+        let at = line.find(name).unwrap() + name.len();
+        line[at..].split(',').next().unwrap().parse().unwrap()
+    };
+    let mut casts: Vec<Vec<(f64, f64)>> = Vec::new();
+    for line in log
+        .lines()
+        .filter(|line| line.contains("{SpellID: 10623} [DEBUG]"))
+    {
+        let heal = (field(line, "HealingPower: "), field(line, "BaseHealing:"));
+        match casts.last_mut() {
+            Some(cast) if cast.last().is_some_and(|last| heal.1 < last.1) => cast.push(heal),
+            _ => casts.push(vec![heal]),
+        }
+    }
+    assert!(!casts.is_empty());
+    for cast in &casts {
+        assert!(cast.len() <= 3, "{} Chain Heal jumps", cast.len());
+        for (jump, &(healing_power, base)) in cast.iter().enumerate() {
+            let roll = base / 0.5f64.powi(jump as i32) - 0.714 * healing_power;
+            assert!((472.5..=539.5).contains(&roll), "jump {jump}: roll {roll}");
+        }
+    }
+    // Under Forever's rules it jumps only to players hit in the last four seconds
+    // (`prepare::party_damage`): each of the other four with 1 - e^(-0.2 x 4) = 55%, so a cast
+    // reaches 2.72 players on average. The Go reference's rules reach all three.
+    let players = players_a_cast(&result, 10623);
+    assert!(
+        (2.65..=2.79).contains(&players),
+        "{players} players a Chain Heal"
+    );
+    let reference = run_reference("restoration-shaman");
+    assert_eq!(players_a_cast(&reference, 10623), 3.0);
+    // Riptide recast every 6 seconds keeps its 15 second heal over time on each player: about
+    // five ticks a cast, not the two or three a cut short one would give.
+    let riptide = player(&result)["actions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|action| action["id"]["spellId"] == 1239243)
+        .unwrap();
+    let sum = |key: &str| -> f64 {
+        riptide["targets"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|t| t[key].as_f64().unwrap_or(0.0))
+            .sum()
+    };
+    let ticks = sum("ticks") + sum("critTicks");
+    assert!(
+        ticks > 4.5 * sum("casts"),
+        "{ticks} ticks for {} casts",
+        sum("casts")
+    );
+    golden("restoration-shaman", &result);
+}
+
+/// Under Forever's rules a healer sim names the overhealing share of each of its heals, and only
+/// what is left counts: the Holy Paladin's Flash of Light, Holy Light and Holy Shock heals lose
+/// their measured shares, so its healing per second falls by each heal's share of its healing.
+/// The Go reference's rules, which the Holy Paladin's Go goldens use, and a damage spec name none.
+#[test]
+fn forever_healer_sims_count_healing_less_overhealing() {
+    let family = Path::new(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/fixtures/mage/prepared-v2"
+    ));
+    let request = |name: &str| fs::read(family.join(format!("{name}.request.json"))).unwrap();
+    // Without racials: the 26 October racials are Forever's own, and this compares the
+    // overhealing split alone.
+    let mut holy: Value = serde_json::from_slice(&request("holy-paladin-healing")).unwrap();
+    holy["raid"]["parties"][0]["players"][0]["disableRacials"] = true.into();
+    let holy = serde_json::to_vec(&holy).unwrap();
+    let forever = prepare_json_with(&holy, "rust", Rules::Forever).unwrap();
+    let reference = prepare_json_with(&holy, "rust", Rules::GoReference).unwrap();
+    let share = |spell: i64| {
+        forever["player"]["overheal"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|entry| entry["spell_id"] == spell)
+            .map(|entry| entry["fraction"].as_f64().unwrap())
+    };
+    // Flash of Light rank 6, Holy Light rank 9 and the Go reference's Holy Shock heal.
+    assert_eq!(share(19943), Some(0.0699));
+    assert_eq!(share(25292), Some(0.1024));
+    assert_eq!(share(25903), Some(0.0658));
+    // Holy Shock's damage is no heal.
+    assert_eq!(share(1311606), None);
+    assert!(reference["player"].get("overheal").is_none());
+    let shadow = request("shadow-priest-holy-nova");
+    let shadow = prepare_json_with(&shadow, "rust", Rules::Forever).unwrap();
+    assert!(shadow["player"].get("overheal").is_none());
+
+    // The heals draw the same rolls either way, so each heal's healing and overhealing add up
+    // to what the reference heals, split at its share.
+    let sim = |prepared: &Value| {
+        let prepared = serde_json::from_value(prepared.clone()).unwrap();
+        simulate_prepared(&prepared).unwrap().result
+    };
+    let (forever, reference) = (sim(&forever), sim(&reference));
+    let totals = |result: &Value, spell: i64, key: &str| -> f64 {
+        player(result)["actions"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|action| action["id"]["spellId"] == spell)
+            .flat_map(|action| action["targets"].as_array().unwrap())
+            .map(|target| target[key].as_f64().unwrap_or(0.0))
+            .sum()
+    };
+    for (spell, fraction) in [(19943, 0.0699), (25292, 0.1024), (25903, 0.0658)] {
+        let whole = totals(&reference, spell, "healing");
+        let healing = totals(&forever, spell, "healing");
+        let overhealing = totals(&forever, spell, "overhealing");
+        assert!(whole > 0.0, "{spell} heals");
+        assert!(
+            ((healing + overhealing) / whole - 1.0).abs() < 1e-9,
+            "{spell}"
+        );
+        assert!((overhealing / whole - fraction).abs() < 1e-9, "{spell}");
+    }
+    let hps = |result: &Value| player(result)["hps"]["avg"].as_f64().unwrap();
+    assert!(hps(&forever) < hps(&reference));
+}
+
+/// Heal over time ticks crit in Forever: foreverlogs.gg's level 30 beta logs flag Renew,
+/// Rejuvenation, Regrowth and Healing Stream Totem ticks as crits at 1.5 times the tick, mid-way
+/// between normal ticks on the same player, at about the caster's direct heal crit share
+/// (`validation/2026-10-25-heal-tick-crits.json`), and their client rows state Periodic Can Crit.
+/// Under Forever's rules each tick rolls the healing crit on spell crit; the Go reference's
+/// ticks never crit.
+#[test]
+fn forever_heal_ticks_crit_as_their_rows_state() {
+    let request = fs::read(fixtures().join("restoration-druid.request.json")).unwrap();
+    let forever = prepare_json_with(&request, "rust", Rules::Forever).unwrap();
+    let reference = prepare_json_with(&request, "rust", Rules::GoReference).unwrap();
+    let flagged = |prepared: &Value, spell: i64| -> bool {
+        prepared["effects"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|effect| effect["kind"] == "heals")
+            .flat_map(|effect| effect["heals"].as_array().unwrap())
+            .find(|heal| heal["spell_id"] == spell)
+            .map(|heal| heal["tick_can_crit"] == true)
+            .unwrap()
+    };
+    // Rejuvenation rank 11, Regrowth rank 9 and Wild Growth rank 3; Healing Touch has no tick.
+    for spell in [25299, 9858, 1238215] {
+        assert!(flagged(&forever, spell), "{spell} ticks crit under Forever");
+        assert!(
+            !flagged(&reference, spell),
+            "{spell} ticks never crit in Go"
+        );
+    }
+    assert!(!flagged(&forever, 25297));
+
+    let sim = |prepared: &Value| {
+        let prepared = serde_json::from_value(prepared.clone()).unwrap();
+        simulate_prepared(&prepared).unwrap().result
+    };
+    let (forever, reference) = (sim(&forever), sim(&reference));
+    let totals = |result: &Value, spell: i64, key: &str| -> f64 {
+        player(result)["actions"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|action| action["id"]["spellId"] == spell)
+            .flat_map(|action| action["targets"].as_array().unwrap())
+            .map(|target| target[key].as_f64().unwrap_or(0.0))
+            .sum()
+    };
+    // The druid's spell crit, 15.86% and 25.86% while Elune's Light is up: Rejuvenation takes
+    // no crit bonus of its own.
+    let crits = totals(&forever, 25299, "critTicks");
+    let share = crits / (crits + totals(&forever, 25299, "ticks"));
+    assert!(
+        (0.15..0.2586).contains(&share),
+        "Rejuvenation crits {share}"
+    );
+    for spell in [25299, 9858, 1238215] {
+        assert_eq!(totals(&reference, spell, "critTicks"), 0.0, "{spell}");
+        assert!(totals(&forever, spell, "critTicks") > 0.0, "{spell}");
+    }
+    // A crit tick heals 1.5 times the 337.907 a tick of Rejuvenation rank 11 heals (above),
+    // 506.860, of which Rejuvenation's 17.76% is overhealing.
+    logs(
+        "restoration-druid",
+        &forever,
+        &["{SpellID: 25299} tick Crit for 416.842 healing, 90.018 overhealing."],
+    );
+}
+
+/// A healer sim under Forever's rules reports its burst healing beside its healing per second:
+/// the most it healed in any ten seconds of each fight, over ten seconds (`prepare::burst_hps`).
+/// It is at least the fight's whole healing per second, and at most all of a fight's healing in
+/// ten seconds. The Go reference's rules report none.
+#[test]
+fn forever_healer_sims_report_burst_healing() {
+    for name in ["holy-priest", "restoration-druid", "restoration-shaman"] {
+        let result = run(name);
+        let player = player(&result);
+        let hps = player["hps"]["avg"].as_f64().unwrap();
+        let burst = player["burstHps"]["avg"].as_f64().unwrap();
+        let fight = result["avgIterationDuration"].as_f64().unwrap_or(120.0);
+        println!("{name}: {hps:.1} HPS, burst {burst:.1}, fight {fight:.1} s");
+        assert!(burst > hps, "{name}: burst {burst} at most {hps}");
+        assert!(
+            burst < hps * fight / 10.0,
+            "{name}: burst {burst} above the fight's healing"
+        );
+        assert!(
+            run_reference(name)["raidMetrics"]["parties"][0]["players"][0]
+                .get("burstHps")
+                .is_none(),
+            "{name}: the reference reports burst"
+        );
+    }
+}
+
+/// The first fight's burst equals the best ten seconds of the healing its log lines show: every
+/// heal, tick and shield on the healer, less overhealing. The log's times are rounded to the
+/// hundredth of a second, so the check brackets it between windows a hundredth shorter and longer.
+#[test]
+fn the_first_fights_burst_is_its_best_ten_seconds_of_logged_healing() {
+    let mut request: Value =
+        serde_json::from_slice(&fs::read(fixtures().join("holy-priest.request.json")).unwrap())
+            .unwrap();
+    request["simOptions"]["saveAllValues"] = json!(true);
+    let prepared = prepare(request.to_string().as_bytes(), "rust").unwrap();
+    check_prepared(&prepared).unwrap();
+    let result = simulate_prepared(&prepared).unwrap().result;
+    let first = player(&result)["burstHps"]["allValues"][0]
+        .as_f64()
+        .unwrap();
+    let mut heals: Vec<(f64, f64)> = Vec::new();
+    for line in result["logs"].as_str().unwrap().lines() {
+        let labels: Vec<&str> = line.splitn(4, "] [").collect();
+        if labels.len() < 3 {
+            continue;
+        }
+        let (unit, target) = (labels[1], labels[2].split(']').next().unwrap());
+        if unit != target {
+            continue;
+        }
+        let amount = if let Some(at) = line.find(" for ").filter(|_| line.contains(" healing")) {
+            line[at + 5..].split(' ').next().unwrap()
+        } else if let Some(at) = line.find(" Shield for ") {
+            line[at + 12..].trim_end_matches('.')
+        } else {
+            continue;
+        };
+        let time: f64 = line[1..line.find(']').unwrap()].parse().unwrap();
+        heals.push((time, amount.parse().unwrap()));
+    }
+    assert!(heals.len() > 50, "{} heals logged", heals.len());
+    let best = |window: f64| -> f64 {
+        heals
+            .iter()
+            .map(|&(end, _)| {
+                heals
+                    .iter()
+                    .filter(|&&(at, _)| at > end - window && at <= end)
+                    .map(|&(_, amount)| amount)
+                    .sum::<f64>()
+            })
+            .fold(0.0, f64::max)
+            / 10.0
+    };
+    let (low, high) = (best(9.99), best(10.01));
+    assert!(
+        low - 0.01 <= first && first <= high + 0.01,
+        "burst {first}, logged {low} to {high}"
+    );
+}
+
+/// Inner Focus (14751) makes the healer's next heal free and then ends: its client row has one
+/// proc charge, and its cost effect's class mask names every heal. A heal spends it; a
+/// healer's Inner Focus that no heal spent made every later heal free until the fight ended.
+#[test]
+fn a_heal_spends_inner_focus() {
+    let mut request: Value =
+        serde_json::from_slice(&fs::read(fixtures().join("holy-priest.request.json")).unwrap())
+            .unwrap();
+    request["simOptions"]["iterations"] = json!(1);
+    let prepared = prepare(request.to_string().as_bytes(), "rust").unwrap();
+    check_prepared(&prepared).unwrap();
+    let result = simulate_prepared(&prepared).unwrap().result;
+    let lines: Vec<&str> = result["logs"].as_str().unwrap().lines().collect();
+    let gains: Vec<usize> = lines
+        .iter()
+        .enumerate()
+        .filter(|(_, line)| line.contains("Aura gained: {SpellID: 14751}"))
+        .map(|(i, _)| i)
+        .collect();
+    assert!(
+        gains.len() >= 2,
+        "{} Inner Focus casts in a 3 minute fight",
+        gains.len()
+    );
+    for &gained in &gains {
+        let faded = lines[gained..]
+            .iter()
+            .position(|line| line.contains("Aura faded: {SpellID: 14751}"))
+            .map(|offset| gained + offset)
+            .expect("Inner Focus fades");
+        let time = |line: &str| -> f64 { line[1..line.find(']').unwrap()].parse().unwrap() };
+        // Whatever spent it, it ends at once rather than at the fight's end.
+        assert!(
+            time(lines[faded]) - time(lines[gained]) < 3.0,
+            "Inner Focus up from {} to {}",
+            lines[gained],
+            lines[faded]
+        );
+    }
+    // After the last one, heals cost mana again.
+    let last = *gains.last().unwrap();
+    assert!(
+        lines[last..]
+            .iter()
+            .any(|line| line.contains("Spent") && line.contains("mana from")),
+        "no heal paid for mana after the last Inner Focus"
+    );
+}

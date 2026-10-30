@@ -1,0 +1,10 @@
+/target/
+/output/
+/oracle-cache/
+__pycache__/
+.env
+.env.*
+.DS_Store
+
+# release/ is matched by the machine-wide global ignore, but the manifest is load-bearing
+!/release/

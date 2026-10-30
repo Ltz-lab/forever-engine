@@ -1,0 +1,130 @@
+//! Go racials.go effects with runtime behavior.
+
+use super::{Agent, AuraRef, Fight, ModId, ModKind, Side, SpellId, SpellResult};
+
+/// Go racials.go `applyEureka`: its aura and modifiers.
+#[derive(Clone, Debug)]
+pub(crate) struct Eureka {
+    pub(crate) aura: AuraRef,
+    /// Cost, damage and the tick cancel, in Go's registration and activation order.
+    mods: Vec<ModId>,
+}
+
+impl<A: Agent> Fight<A> {
+    /// Touch of the Grave's proc trigger: Go `AttachProcTriggerCallback` with
+    /// `ProcMaskDirect`, `OutcomeLanded`, an internal cooldown and the spell batch delay.
+    pub(crate) fn touch_of_the_grave_callback(
+        &mut self,
+        aura: AuraRef,
+        spell: SpellId,
+        result: &SpellResult,
+        chance: f64,
+        delay: i64,
+    ) {
+        let state = &self.spells[spell];
+        // canProcFrom without CanProcFromProcs, then the proc mask and the outcome.
+        if state.flags.proc || !state.direct_proc || !result.landed() {
+            return;
+        }
+        let icd = self.aura(aura).icd;
+        if let Some((timer, _)) = icd {
+            if self.timers[timer] > self.now {
+                return;
+            }
+        }
+        if chance != 1.0 && self.random_for_aura(aura) > chance {
+            return;
+        }
+        if let Some((timer, duration)) = icd {
+            self.timers[timer] = self.now + duration;
+        }
+        self.schedule_delayed_proc_at(self.now + delay, aura, spell, *result);
+    }
+
+    /// The drain's `ApplyEffects`: a hit-only magic roll on a share of maximum health, and
+    /// the same amount of health back when it lands.
+    pub(crate) fn touch_of_the_grave_drain(
+        &mut self,
+        spell: SpellId,
+        target: Side,
+        health_fraction: f64,
+        metrics: usize,
+    ) {
+        let base = health_fraction * self.player_max_health();
+        // A proc off a hit the player took drains the player.
+        let result = match target {
+            Side::Target | Side::Extra(_) => self.calc_damage_hit_only(spell, target, base),
+            Side::Player => self.calc_damage_on_player(spell, base, false),
+            Side::Pet(_) => unreachable!("a pet takes no damage in scope"),
+        };
+        self.deal_damage(spell, result, false);
+        if result.landed() {
+            self.gain_health(result.damage, metrics);
+        }
+    }
+
+    /// Register Eureka!'s modifiers on the spells the exporter resolved from the class masks.
+    pub(crate) fn bind_eureka(
+        &mut self,
+        aura: &str,
+        values: [f64; 3],
+        spells: [&Vec<usize>; 3],
+    ) -> Result<Eureka, String> {
+        let aura = self.player_aura(aura)?;
+        let count = self.spells.len();
+        if spells
+            .iter()
+            .flat_map(|list| list.iter())
+            .any(|&spell| spell >= count)
+        {
+            return Err("Eureka! names a spell position outside the spellbook".into());
+        }
+        let kinds = [
+            ModKind::PowerCostPercent,
+            ModKind::DamageDonePercent,
+            ModKind::DotDamageDonePercent,
+        ];
+        let mods = kinds
+            .into_iter()
+            .zip(values)
+            .zip(spells)
+            .map(|((kind, value), spells)| self.register_mod(kind, value, 0, spells.clone()))
+            .collect();
+        Ok(Eureka { aura, mods })
+    }
+
+    /// Eureka!'s OnGain: its modifiers.
+    pub(crate) fn eureka_gain(&mut self) {
+        let eureka = self.eureka.clone().expect("Eureka! is bound");
+        for modifier in eureka.mods {
+            self.activate_mod(modifier);
+        }
+    }
+
+    pub(crate) fn eureka_expire(&mut self) {
+        let eureka = self.eureka.clone().expect("Eureka! is bound");
+        for modifier in eureka.mods {
+            self.deactivate_mod(modifier);
+        }
+    }
+
+    /// Go `healthBar.GainHealth`.
+    pub(crate) fn gain_health(&mut self, amount: f64, metrics: usize) {
+        let old = self.player.health;
+        let max_health = self.player_max_health();
+        let new = (old + amount).min(max_health);
+        let resource = &mut self.resources[metrics];
+        resource.events += 1;
+        resource.gain += amount;
+        resource.actual_gain += new - old;
+        if self.log.is_some() {
+            let line = format!(
+                "Gained {amount:.3} health from {} ({old:.3} --> {new:.3}) of {max_health:.0} total.",
+                super::log::action_string(&self.resources[metrics].id),
+            );
+            self.player_log(&line);
+        }
+        self.player.health = new;
+        self.changed(super::reads::RESOURCES);
+    }
+}
